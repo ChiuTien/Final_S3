@@ -21,6 +21,16 @@ if (!$idVille) {
 <div class="container-fluid mt-5">
     <div class="row mb-4">
         <div class="col-md-12">
+            <?php if (!$idVille): ?>
+                <div class="alert alert-danger">
+                    <strong>Erreur:</strong> Aucune ville sélectionnée.
+                </div>
+                <a href="<?= BASE_URL ?>/villes" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-arrow-left"></i> Retour aux villes
+                </a>
+                <?php include 'includes/footer.php'; exit; ?>
+            <?php endif; ?>
+            
             <h2>
                 <i class="fas fa-city"></i>
                 Détails de la ville: 
