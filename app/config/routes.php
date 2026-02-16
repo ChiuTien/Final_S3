@@ -9,9 +9,12 @@ use app\controllers\ControllerVille;
 use app\controllers\ControllerBesoin;
 use app\controllers\ControllerType;
 use app\controllers\ControllerDispatchMere;
+use app\controllers\ControllerDispatchFille;
 use app\controllers\ControllerProduit;
+use app\controllers\ControllerProduitBesoin;
 use app\models\Don;
 use app\models\Donnation;
+use app\models\DispatchFille;
 
 /** 
  * @var Router $router 
@@ -38,6 +41,146 @@ $router->group('', function(Router $router) use ($app) {
     $router->get('/dispatchDetail', function() use ($app) {
         $idDispatchMere = $_GET['id'] ?? null;
         $app->render('dispatchDetail', ['mereId' => $idDispatchMere]);
+    });
+
+    // Route pour afficher les détails d'une ville
+    $router->get('/villeDetail', function() use ($app) {
+        $idVille = $_GET['id'] ?? null;
+        
+        if (!$idVille) {
+            $app->redirect('/villes');
+            return;
+        }
+        
+        $controllerVille = new ControllerVille();
+        $controllerBesoin = new ControllerBesoin();
+        $controllerDon = new ControllerDon();
+        $controllerDispatchMere = new ControllerDispatchMere();
+        $controllerDispatchFille = new ControllerDispatchFille();
+        $controllerProduit = new ControllerProduit();
+        $controllerProduitBesoin = new ControllerProduitBesoin();
+        $controllerType = new ControllerType();
+        $controllerDonnation = new ControllerDonnation();
+        
+        $ville = $controllerVille->getVilleById($idVille);
+        $besoins = $controllerBesoin->getAllBesoin();
+        $dons = $controllerDon->getAllDons();
+        $donnations = $controllerDonnation->getAllDonnation();
+        $dispatchMeres = $controllerDispatchMere->getAllDispatchMeres();
+        $types = $controllerType->getAllTypes();
+        $produits = $controllerProduit->getAllProduit();
+        $produitBesoins = $controllerProduitBesoin->getAllProduitBesoin();
+        
+        $app->render('villeDetail', [
+            'ville' => $ville,
+            'idVille' => $idVille,
+            'besoins' => $besoins,
+            'dons' => $dons,
+            'donnations' => $donnations,
+            'dispatchMeres' => $dispatchMeres,
+            'types' => $types,
+            'produits' => $produits,
+            'produitBesoins' => $produitBesoins
+        ]);
+    });
+
+    // Route POST pour ajouter un besoin depuis villeDetail
+    $router->post('/villeDetail/besoin', function() use ($app) {
+        try {
+            $request = $app->request();
+            $idVille = $_GET['id'] ?? null;
+            $valBesoin = $request->data->valBesoin ?? null;
+            $idType = $request->data->idType ?? null;
+
+            if (!$idVille || !$valBesoin || !$idType) {
+                $app->redirect('/villeDetail?id=' . htmlspecialchars($idVille));
+                return;
+            }
+
+            $besoin = new \app\models\Besoin();
+            $besoin->setIdVille($idVille);
+            $besoin->setValBesoin($valBesoin);
+            $besoin->setIdType($idType);
+
+            $controllerBesoin = new ControllerBesoin();
+            $controllerBesoin->createBesoin($besoin);
+
+            $app->redirect('/villeDetail?id=' . htmlspecialchars($idVille));
+        } catch (\Exception $e) {
+            $app->redirect('/villeDetail?id=' . htmlspecialchars($_GET['id'] ?? ''));
+        }
+    });
+
+    // Route POST pour ajouter un don depuis villeDetail
+    $router->post('/villeDetail/don', function() use ($app) {
+        try {
+            $request = $app->request();
+            $idVille = $_GET['id'] ?? null;
+            $dateDon = $request->data->dateDon ?? null;
+            $produits = $request->data->produits ?? [];
+
+            if (!$idVille || !$dateDon) {
+                $app->redirect('/villeDetail?id=' . htmlspecialchars($idVille));
+                return;
+            }
+
+            // Vérifier qu'il y a au moins un produit valide
+            $produitsValides = 0;
+            if (is_array($produits)) {
+                foreach ($produits as $produit) {
+                    if (!empty($produit['idProduit']) && !empty($produit['quantite']) && floatval($produit['quantite']) > 0) {
+                        $produitsValides++;
+                    }
+                }
+            }
+            
+            if ($produitsValides === 0) {
+                $app->redirect('/villeDetail?id=' . htmlspecialchars($idVille));
+                return;
+            }
+
+            $don = new Don(null, new \DateTime($dateDon), 0);
+            $controllerDon = new ControllerDon();
+            $idDon = $controllerDon->addDon($don);
+
+            $controllerDonnation = new ControllerDonnation();
+            foreach ($produits as $produit) {
+                if (!empty($produit['idProduit']) && !empty($produit['quantite']) && floatval($produit['quantite']) > 0) {
+                    $donnation = new Donnation(null, $idDon, $produit['idProduit'], $produit['quantite']);
+                    $controllerDonnation->addDonnation($donnation);
+                }
+            }
+
+            $controllerDon->calculerEtMettreAJourPrixTotal($idDon);
+            $app->redirect('/villeDetail?id=' . htmlspecialchars($idVille));
+        } catch (\Exception $e) {
+            $app->redirect('/villeDetail?id=' . htmlspecialchars($_GET['id'] ?? ''));
+        }
+    });
+
+    // Route POST pour ajouter un dispatch mère depuis villeDetail
+    $router->post('/villeDetail/dispatch', function() use ($app) {
+        try {
+            $request = $app->request();
+            $idVille = $_GET['id'] ?? null;
+            $dateDispatch = $request->data->dateDispatch ?? null;
+
+            if (!$idVille || !$dateDispatch) {
+                $app->redirect('/villeDetail?id=' . htmlspecialchars($idVille));
+                return;
+            }
+
+            $dispatch = new \app\models\DispatchMere();
+            $dispatch->setIdVille($idVille);
+            $dispatch->setDateDispatch($dateDispatch);
+
+            $controllerDispatchMere = new ControllerDispatchMere();
+            $controllerDispatchMere->addDispatchMere($dispatch);
+
+            $app->redirect('/villeDetail?id=' . htmlspecialchars($idVille));
+        } catch (\Exception $e) {
+            $app->redirect('/villeDetail?id=' . htmlspecialchars($_GET['id'] ?? ''));
+        }
     });
 
     // Route pour la page d'accueil
