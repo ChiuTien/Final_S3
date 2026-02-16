@@ -34,7 +34,7 @@
                     <div class="dropdown-content">
                         <a href="#" onclick="openModal('villeModal')"><i class="fas fa-city"></i>Nouvelle ville</a>
                         <a href="#" onclick="openModal('besoinModal')"><i class="fas fa-list"></i>Nouveau besoin</a>
-                        <a href="<?= BASE_URL ?>/donInsert"><i class="fas fa-gift"></i>Nouveau don</a>
+                        <a href="/donInsert" onclick="openModal('donModal')"><i class="fas fa-gift"></i>Nouveau don</a>
                         <a href="#" onclick="openModal('dispatchModal')"><i class="fas fa-truck"></i>Nouveau dispatch</a>
                     </div>
                 </li>

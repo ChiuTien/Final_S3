@@ -1,7 +1,7 @@
 <?php 
     namespace app\controllers;
 
-    use app\model\Donnation;
+    use app\models\Donnation;
     use app\repository\RepDonnation;
 
     class ControllerDonnation {
