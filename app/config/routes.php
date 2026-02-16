@@ -2,22 +2,6 @@
 // Basic routes for the app views
 use function Flight\route;
 
-// Home
-Flight::route('GET /', function() {
-    Flight::render('welcome');
-});
-
-Flight::route('GET /villes', function() {
-    Flight::render('villes');
-});
-
-Flight::route('GET /besoins', function() {
-    Flight::render('besoins');
-});
-
-Flight::route('GET /dispatch', function() {
-    Flight::render('dispatch');
-});
 
 Flight::route('GET /donsAffichage', function() {
     // Prepare data via controllers if available
