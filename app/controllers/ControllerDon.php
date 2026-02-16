@@ -25,8 +25,9 @@ class ControllerDon {
     public function getAllDons(): array {
         return $this->repDon->getAllDons();
     }
-
-
+    public function calculerEtMettreAJourPrixTotal(int $idDon): void {
+        $this->repDon->calculerEtMettreAJourPrixTotal($idDon);
+    }
 }
 
 ?>

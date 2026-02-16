@@ -30,12 +30,12 @@
                 <li><a href="<?= BASE_URL ?>/donsAffichage"><i class="fas fa-gift"></i>Dons</a></li>
                 <li><a href="<?= BASE_URL ?>/dispatch"><i class="fas fa-truck"></i>Dispatch</a></li>
                 <li class="dropdown">
-                    <a href="#"><i class="fas fa-plus-circle"></i>Insertions <i class="fas fa-chevron-down" style="font-size: 12px; margin-left: 5px;"></i></a>
+                    <a href="#" class="dropdown-toggle"><i class="fas fa-plus-circle"></i>Insertions <i class="fas fa-chevron-down" style="font-size: 12px; margin-left: 5px;"></i></a>
                     <div class="dropdown-content">
-                        <a href="#" onclick="openModal('villeModal')"><i class="fas fa-city"></i>Nouvelle ville</a>
-                        <a href="#" onclick="openModal('besoinModal')"><i class="fas fa-list"></i>Nouveau besoin</a>
-                        <a href="/donInsert" onclick="openModal('donModal')"><i class="fas fa-gift"></i>Nouveau don</a>
-                        <a href="#" onclick="openModal('dispatchModal')"><i class="fas fa-truck"></i>Nouveau dispatch</a>
+                        <a href="<?= BASE_URL ?>/donInsert"><i class="fas fa-gift"></i>Nouveau don</a>
+                        <a href="#" onclick="openModal('villeModal'); return false;"><i class="fas fa-city"></i>Nouvelle ville</a>
+                        <a href="#" onclick="openModal('besoinModal'); return false;"><i class="fas fa-list"></i>Nouveau besoin</a>
+                        <a href="#" onclick="openModal('dispatchModal'); return false;"><i class="fas fa-truck"></i>Nouveau dispatch</a>
                     </div>
                 </li>
             </ul>
