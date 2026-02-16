@@ -1,24 +1,11 @@
--- Active: 1771004203608@@127.0.0.1@3306
+
 CREATE DATABASE BNGRC;
 USE BNGRC;
 
 CREATE OR REPLACE TABLE Besoin(
     idBesoin INT PRIMARY KEY AUTO_INCREMENT,
-    idTypeBesoin INT,
-    valBesoin VARCHAR(100)
-);
-
-CREATE OR REPLACE TABLE EquivalenceBesoin(
-    idEquivalenceBesoin INT PRIMARY KEY AUTO_INCREMENT,
-    idBesoin INT,
-    prixUnitaire DOUBLE,
-    quantite DOUBLE,
-    val VARCHAR(50)
-);
-
-CREATE OR REPLACE TABLE TypeBesoin(
-    idTypeBesoin INT PRIMARY KEY AUTO_INCREMENT,
-    valTypeBesoin VARCHAR(100)
+    valBesoin VARCHAR(100),
+    idType INT
 );
 
 CREATE OR REPLACE TABLE Region(
@@ -30,4 +17,37 @@ CREATE OR REPLACE TABLE Ville(
     idVille INT PRIMARY KEY AUTO_INCREMENT,
     idRegion INT,
     valVille VARCHAR(100)
+);
+
+CREATE OR REPLACE TABLE Don(
+    idDon INT PRIMARY KEY AUTO_INCREMENT,
+    dateDon DATE,
+    totalPrix DOUBLE
+);
+
+
+CREATE OR REPLACE TABLE Produit(
+    idProduit INT PRIMARY KEY AUTO_INCREMENT,
+    valProduit VARCHAR(100),
+    idType INT
+);
+
+CREATE OR REPLACE TABLE EquivalenceProduit(
+    idEquivalenceProduit INT PRIMARY KEY AUTO_INCREMENT,
+    idProduit INT,
+    quantite DOUBLE,
+    val VARCHAR(50),
+    prix DOUBLE
+);
+
+CREATE OR REPLACE TABLE ProduitBesoin(
+    idProduitBesoin INT PRIMARY KEY AUTO_INCREMENT,
+    idProduit INT,
+    idBesoin INT
+);
+CREATE OR REPLACE TABLE Donnation(
+    idDonnation INT PRIMARY KEY AUTO_INCREMENT,
+    idDon INT,
+    idProduit INT,
+    quantiteProduit DECIMAL(10,2)
 );
