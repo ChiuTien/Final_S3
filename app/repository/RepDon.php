@@ -1,5 +1,5 @@
 <?php
-    namespace app\Repository;
+    namespace app\repository;
     use app\models\Don;
     use Flight;
     use PDO;
@@ -88,6 +88,33 @@
                 throw $th;
             }
             return $dons;
+        }
+
+        /**
+         * Calcule et met à jour le prix total d'un don à partir des donnations et leurs équivalences
+         */
+        public function calculerEtMettreAJourPrixTotal(int $idDon): void {
+            try {
+                // Calculer le prix total à partir de la vue DonnationEquivalence
+                $sql = "SELECT SUM(quantiteProduit * prix / quantite) as totalPrix 
+                        FROM DonnationEquivalence 
+                        WHERE idDon = :idDon";
+                $stmt = $this->db->prepare($sql);
+                $stmt->bindValue(':idDon', $idDon, PDO::PARAM_INT);
+                $stmt->execute();
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                $totalPrix = $result['totalPrix'] ?? 0;
+                
+                // Mettre à jour le prix total du don
+                $sqlUpdate = "UPDATE Don SET totalPrix = :totalPrix WHERE idDon = :idDon";
+                $stmtUpdate = $this->db->prepare($sqlUpdate);
+                $stmtUpdate->bindValue(':totalPrix', $totalPrix, PDO::PARAM_STR);
+                $stmtUpdate->bindValue(':idDon', $idDon, PDO::PARAM_INT);
+                $stmtUpdate->execute();
+            } catch (\Throwable $th) {
+                throw $th;
+            }
         }
     }
 

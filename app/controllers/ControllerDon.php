@@ -1,5 +1,5 @@
 <?php 
-namespace App\Controllers;
+namespace app\controllers;
 use app\models\Don;
 use app\repository\RepDon;
 class ControllerDon {
@@ -24,6 +24,10 @@ class ControllerDon {
     }
     public function getAllDons(): array {
         return $this->repDon->getAllDons();
+    }
+
+    public function calculerEtMettreAJourPrixTotal(int $idDon): void {
+        $this->repDon->calculerEtMettreAJourPrixTotal($idDon);
     }
 
 
