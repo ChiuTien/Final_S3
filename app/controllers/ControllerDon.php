@@ -10,8 +10,8 @@ class ControllerDon {
         $this->repDon = new RepDon();
     }
     //Methodes
-    public function addDon(Don $don): void {
-        $this->repDon->addDon($don);
+    public function addDon(Don $don): int {
+        return $this->repDon->addDon($don);
     }
     public function deleteDon(int $id): void {
         $this->repDon->deleteDon($id);
