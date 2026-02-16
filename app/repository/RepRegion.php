@@ -1,6 +1,7 @@
 <?php
 namespace app\repository;
 
+use app\models\Region;
 use PDO;
 
 class RepRegion
@@ -11,21 +12,21 @@ class RepRegion
         $this->db = $db;
     }
 
-    public function addRegion($region) {
+    public function addRegion($region): void {
         $sql = "INSERT INTO region (valRegion) VALUES (:valRegion)";
         $stmt = $this->db->prepare($sql);
         $stmt->bindValue(':valRegion', $region->getValRegion(), PDO::PARAM_STR);
-        return $stmt->execute();
+        $stmt->execute();
     }
 
-    public function removeRegion($region) {
+    public function removeRegion($region): void {
         $sql = "DELETE FROM region WHERE idRegion = :idRegion";
         $stmt = $this->db->prepare($sql);
         $stmt->bindValue(':idRegion', $region->getIdRegion(), PDO::PARAM_INT);
-        return $stmt->execute();
+        $stmt->execute();
     }
 
-    public function getRegionById($id) {
+    public function getRegionById($id): Region {
         $sql = "SELECT * FROM region WHERE idRegion = :idRegion";
         $stmt = $this->db->prepare($sql);
         $stmt->bindValue(':idRegion', $id, PDO::PARAM_INT);
@@ -37,6 +38,14 @@ class RepRegion
         $sql = "SELECT * FROM region";
         $stmt = $this->db->query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function updateRegion($region): void {
+        $sql = "UPDATE region SET valRegion = :valRegion WHERE idRegion = :idRegion";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':valRegion', $region->getValRegion(), PDO::PARAM_STR);
+        $stmt->bindValue(':idRegion', $region->getIdRegion(), PDO::PARAM_INT);
+        $stmt->execute();
     }
 
 }
