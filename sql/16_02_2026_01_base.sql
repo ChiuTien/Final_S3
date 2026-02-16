@@ -21,4 +21,13 @@ CREATE OR REPLACE TABLE TypeBesoin(
     valTypeBesoin VARCHAR(100)
 );
 
+CREATE OR REPLACE TABLE Region(
+    idRegion INT PRIMARY KEY AUTO_INCREMENT,
+    valRegion VARCHAR(100)
+);
 
+CREATE OR REPLACE TABLE Ville(
+    idVille INT PRIMARY KEY AUTO_INCREMENT,
+    idRegion INT,
+    valVille VARCHAR(100)
+);
