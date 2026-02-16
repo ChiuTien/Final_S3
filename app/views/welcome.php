@@ -23,21 +23,21 @@
         <div class="col-3">
             <a class="stat-card" href="#" style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);">
                 <i class="fas fa-list"></i>
-                <h3>47</h3>
+                <h3><?= $controllerBesoin->getNombreBesoin() ?></h3>
                 <p>Besoins enregistrés</p>
             </a>
         </div>
         <div class="col-3">
             <a class="stat-card" href="#" style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%);">
                 <i class="fas fa-gift"></i>
-                <h3>89</h3>
+                <h3><?= $controllerDon->getNombreDons() ?></h3>
                 <p>Dons collectés</p>
             </a>
         </div>
         <div class="col-3">
             <a class="stat-card" href="#" style="background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);">
                 <i class="fas fa-truck"></i>
-                <h3>34</h3>
+                <h3><?= $controllerDispatchMere->getNombreDispatchMeres() ?></h3>
                 <p>Dispachs effectués</p>
             </a>
         </div>

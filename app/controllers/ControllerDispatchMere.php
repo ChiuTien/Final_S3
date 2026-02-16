@@ -7,8 +7,8 @@ use app\repository\RepDispatchMere;
 class ControllerDispatchMere {
     private RepDispatchMere $repo;
 
-    public function __construct(RepDispatchMere $repo) {
-        $this->repo = $repo;
+    public function __construct() {
+        $this->repo = new RepDispatchMere();
     }
 
     public function addDispatchMere(DispatchMere $d): void {
@@ -29,6 +29,11 @@ class ControllerDispatchMere {
 
     public function updateDispatchMere(DispatchMere $d) {
         return $this->repo->updateDispatchMere($d);
+    }
+    //Methodes supplementaires
+    public function getNombreDispatchMeres() {
+        $dispatchMeres = $this->getAllDispatchMeres();
+        return count($dispatchMeres);
     }
 }
 ?>

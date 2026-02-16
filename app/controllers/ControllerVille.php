@@ -36,9 +36,8 @@ class ControllerVille {
     }
 
     //Methodes supplementaires
-    public static function getNombreVille() {
-        $villeRepo = new RepVille();
-        $villes = $villeRepo->getAllVilles();
+    public function getNombreVille() {
+        $villes = $this->getAllVilles();
         return count($villes);
     }
 }
