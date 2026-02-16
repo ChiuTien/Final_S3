@@ -9,6 +9,13 @@
         <p>Consultez et filtrez les dons par ville</p>
     </div>
 
+    <!-- Bouton d'ajout -->
+    <div style="margin-bottom: 20px; text-align: right;">
+        <a href="<?= BASE_URL ?>/donInsert" class="btn btn-primary">
+            <i class="fas fa-plus-circle"></i> Ajouter un nouveau don
+        </a>
+    </div>
+
     <!-- Filtres -->
     <div class="filter-section">
         <div class="filter-group">

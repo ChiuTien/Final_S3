@@ -14,32 +14,32 @@
     <!-- Statistics Cards -->
     <div class="row">
         <div class="col-3">
-            <div class="stat-card">
+            <a class="stat-card" href="#">
                 <i class="fas fa-city"></i>
                 <h3><?= $controllerVille->getNombreVille() ?></h3>
                 <p>Villes</p>
-            </div>
+            </a>
         </div>
         <div class="col-3">
-            <div class="stat-card" style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);">
+            <a class="stat-card" href="#" style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);">
                 <i class="fas fa-list"></i>
                 <h3>47</h3>
                 <p>Besoins enregistrés</p>
-            </div>
+            </a>
         </div>
         <div class="col-3">
-            <div class="stat-card" style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%);">
+            <a class="stat-card" href="#" style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%);">
                 <i class="fas fa-gift"></i>
                 <h3>89</h3>
                 <p>Dons collectés</p>
-            </div>
+            </a>
         </div>
         <div class="col-3">
-            <div class="stat-card" style="background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);">
+            <a class="stat-card" href="#" style="background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);">
                 <i class="fas fa-truck"></i>
                 <h3>34</h3>
                 <p>Dispachs effectués</p>
-            </div>
+            </a>
         </div>
     </div>
 
