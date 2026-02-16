@@ -3,8 +3,7 @@ namespace app\models;
 
 class TypeBesoin {
     private $idTypeBesoin;
-    public $valTypeBesoin;
-    public $description;
+    private $valTypeBesoin;
 
     public function __construct() {
         
