@@ -1,4 +1,4 @@
--- Active: 1771004203608@@127.0.0.1@3306
+
 CREATE DATABASE BNGRC;
 USER BNGRC;
 
@@ -31,3 +31,10 @@ CREATE OR REPLACE TABLE Ville(
     idRegion INT,
     valVille VARCHAR(100)
 );
+
+CREATE OR REPLACE TABLE Don(
+    idDon INT PRIMARY KEY AUTO_INCREMENT,
+    dateDon DATE,
+    totalPrix DOUBLE
+);
+
