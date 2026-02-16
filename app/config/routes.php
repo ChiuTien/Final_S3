@@ -5,6 +5,9 @@ use flight\Engine;
 use flight\net\Router;
 use app\controllers\ControllerDon;
 use app\controllers\ControllerDonnation;
+use app\controllers\ControllerVille;
+use app\controllers\ControllerBesoin;
+
 /** 
  * @var Router $router 
  * @var Engine $app
@@ -15,7 +18,9 @@ $router->group('', function(Router $router) use ($app) {
 
     // Route pour la page d'accueil
     $router->get('/', function() use ($app) {
-        $app->render('welcome');
+		$controllerVille = new ControllerVille();
+	    $controllerBesoin = new ControllerBesoin();
+        $app->render('welcome', ['controllerVille' => $controllerVille, 'controllerBesoin' => $controllerBesoin]);
     });
 
     // Route pour l'affichage des dons
