@@ -33,7 +33,14 @@ class RepVille
         $stmt = $this->db->prepare($sql);
         $stmt->bindValue(':idVille', $id, PDO::PARAM_INT);
         $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $ville = new Ville();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($row) {
+            $ville->setIdVille($row['idVille']);
+            $ville->setIdRegion($row['idRegion']);
+            $ville->setValVille($row['valVille']);  
+        }
+        return $ville;
     }
 
     public function getAllVilles() {

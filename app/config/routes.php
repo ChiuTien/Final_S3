@@ -27,6 +27,10 @@ $router->group('', function(Router $router) use ($app) {
         $app->render('besoins');
     });
 
+    $router->get('/dispatch', function() use ($app) {
+        $app->render('dispatch');
+    });
+
     // Route pour la page d'accueil
     $router->get('/', function() use ($app) {
 		$controllerVille = new ControllerVille();

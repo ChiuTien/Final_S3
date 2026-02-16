@@ -1,8 +1,12 @@
 <?php
+use app\controllers\ControllerDispatchFille;
+use app\controllers\ControllerDispatchMere;
+use app\controllers\ControllerProduit;
+use app\controllers\ControllerVille;
+
 include __DIR__ . '/includes/header.php';
 
-use app\Controllers\ControllerDispatchFille;
-use app\controllers\ControllerDispatchMere;
+
 
 $dM = new ControllerDispatchMere();
 $meres = $dM->getAllDispatchMeres();
@@ -10,6 +14,9 @@ $meres = $dM->getAllDispatchMeres();
 $dF = new ControllerDispatchFille();
 $filles = $dF->getAllDispatchFilles();
 
+$cv = new ControllerVille();
+
+$prod = new ControllerProduit();
 ?>
 
 <div class="container">
@@ -24,13 +31,12 @@ $filles = $dF->getAllDispatchFilles();
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
-                        <tr><th>ID</th><th>Ville (id)</th><th>Date</th></tr>
+                        <tr><th>Ville</th><th>Date et heure</th></tr>
                     </thead>
                     <tbody>
                         <?php foreach ($meres as $m): ?>
                             <tr>
-                                <td><?= htmlspecialchars($m['id_dispatch_mere'] ?? $m['id'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($m['id_ville'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($cv->getVilleById($m['id_ville'])->getValVille() ?? '') ?></td>
                                 <td><?= htmlspecialchars($m['date_dispatch'] ?? '') ?></td>
                             </tr>
                         <?php endforeach; ?>
@@ -46,14 +52,12 @@ $filles = $dF->getAllDispatchFilles();
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
-                        <tr><th>ID</th><th>ID Mère</th><th>ID Produit</th><th>Quantité</th></tr>
+                        <tr><th>Produit</th><th>Quantité</th></tr>
                     </thead>
                     <tbody>
                         <?php foreach ($filles as $f): ?>
                             <tr>
-                                <td><?= htmlspecialchars($f['id_dispatch_fille'] ?? $f['id'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($f['id_dispatch_mere'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($f['id_produit'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($prod->getProduitById($f['id_produit'])->getValProduit() ?? '') ?></td>
                                 <td><?= htmlspecialchars($f['quantite'] ?? '') ?></td>
                             </tr>
                         <?php endforeach; ?>
