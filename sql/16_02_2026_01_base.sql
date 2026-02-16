@@ -1,9 +1,7 @@
 -- Active: 1771004203608@@127.0.0.1@3306
 CREATE DATABASE BNGRC;
 USER BNGRC;
-<<<<<<< HEAD
 
-=======
 CREATE OR REPLACE TABLE Besoin(
     idBesoin INT PRIMARY KEY AUTO_INCREMENT,
     idTypeBesoin INT,
@@ -17,4 +15,10 @@ CREATE OR REPLACE TABLE EquivalenceBesoin(
     quantite DOUBLE,
     val VARCHAR(50)
 );
->>>>>>> c4130b192f680741c327091848bb2be49701b830
+
+CREATE OR REPLACE TABLE TypeBesoin(
+    idTypeBesoin INT PRIMARY KEY AUTO_INCREMENT,
+    valTypeBesoin VARCHAR(100)
+);
+
+
