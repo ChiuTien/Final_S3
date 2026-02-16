@@ -1,5 +1,32 @@
 <!-- Inclusion du header -->
-<?php include __DIR__ . '/includes/header.php'; ?>
+<?php
+use app\controllers\ControllerType;
+
+include __DIR__ . '/includes/header.php';
+
+$controllerType = new ControllerType();
+$besoins = $controllerBesoin->getAllBesoin();
+$villes = $controllerVille->getAllVilles();
+$types = $controllerType->getAllTypes();
+
+$villeMap = [];
+foreach ($villes as $ville) {
+    $id = is_object($ville) ? $ville->getIdVille() : ($ville['idVille'] ?? null);
+    if ($id === null) {
+        continue;
+    }
+    $villeMap[$id] = is_object($ville) ? $ville->getValVille() : ($ville['valVille'] ?? '');
+}
+
+$typeMap = [];
+foreach ($types as $type) {
+    $id = is_object($type) ? $type->getIdType() : ($type['idType'] ?? null);
+    if ($id === null) {
+        continue;
+    }
+    $typeMap[$id] = is_object($type) ? $type->getValType() : ($type['valType'] ?? '');
+}
+?>
 
 <div class="container">
     <!-- Page Title -->
@@ -40,6 +67,106 @@
                 <h3><?= $controllerDispatchMere->getNombreDispatchMeres() ?></h3>
                 <p>Dispachs effectués</p>
             </a>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: 30px;">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-plus-circle"></i> Nouveau besoin</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="<?= BASE_URL ?>/besoinInsert">
+                        <div class="form-group">
+                            <label for="idVille"><i class="fas fa-city"></i> Ville</label>
+                            <select class="form-control" id="idVille" name="idVille" required>
+                                <option value="">Sélectionnez une ville</option>
+                                <?php foreach ($villes as $ville): ?>
+                                    <?php
+                                        $villeId = is_object($ville) ? $ville->getIdVille() : ($ville['idVille'] ?? '');
+                                        $villeName = is_object($ville) ? $ville->getValVille() : ($ville['valVille'] ?? '');
+                                    ?>
+                                    <option value="<?= htmlspecialchars($villeId) ?>">
+                                        <?= htmlspecialchars($villeName) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="valBesoin"><i class="fas fa-align-left"></i> Besoin</label>
+                            <textarea class="form-control" id="valBesoin" name="valBesoin" rows="3" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="idType"><i class="fas fa-tag"></i> Type</label>
+                            <select class="form-control" id="idType" name="idType" required>
+                                <option value="">Sélectionnez un type</option>
+                                <?php foreach ($types as $type): ?>
+                                    <?php
+                                        $typeId = is_object($type) ? $type->getIdType() : ($type['idType'] ?? '');
+                                        $typeName = is_object($type) ? $type->getValType() : ($type['valType'] ?? '');
+                                    ?>
+                                    <option value="<?= htmlspecialchars($typeId) ?>">
+                                        <?= htmlspecialchars($typeName) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Enregistrer
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-list"></i> Besoins enregistrés</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Besoin</th>
+                                    <th>Ville</th>
+                                    <th>Type</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if (!empty($besoins)): ?>
+                                    <?php foreach ($besoins as $besoin): ?>
+                                        <?php
+                                            if (!is_object($besoin) && !is_array($besoin)) {
+                                                continue;
+                                            }
+                                            $valBesoin = is_object($besoin) ? $besoin->getValBesoin() : ($besoin['valBesoin'] ?? '');
+                                            $idVille = is_object($besoin) ? $besoin->getIdVille() : ($besoin['idVille'] ?? null);
+                                            $idType = is_object($besoin) ? $besoin->getIdType() : ($besoin['idType'] ?? null);
+                                            $villeName = $idVille !== null ? ($villeMap[$idVille] ?? '') : '';
+                                            $typeName = $idType !== null ? ($typeMap[$idType] ?? '') : '';
+                                        ?>
+                                        <tr>
+                                            <td><?= htmlspecialchars($valBesoin ?: 'N/A') ?></td>
+                                            <td><?= htmlspecialchars($villeName ?: 'N/A') ?></td>
+                                            <td><?= htmlspecialchars($typeName ?: 'N/A') ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <tr>
+                                        <td colspan="3" class="text-center text-muted">Aucun besoin enregistré</td>
+                                    </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

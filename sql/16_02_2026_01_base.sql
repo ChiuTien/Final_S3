@@ -15,26 +15,26 @@ CREATE OR REPLACE TABLE Region(
     valRegion VARCHAR(100)
 );
 
-CREATE  TABLE Ville(
+CREATE OR REPLACE TABLE Ville(
     idVille INT PRIMARY KEY AUTO_INCREMENT,
     idRegion INT,
     valVille VARCHAR(100)
 );
 
-CREATE  TABLE Don(
+CREATE OR REPLACE TABLE Don(
     idDon INT PRIMARY KEY AUTO_INCREMENT,
     dateDon DATE,
     totalPrix DOUBLE
 );
 
 
-CREATE  TABLE Produit(
+CREATE OR REPLACE TABLE Produit(
     idProduit INT PRIMARY KEY AUTO_INCREMENT,
     valProduit VARCHAR(100),
     idType INT
 );
 
-CREATE  TABLE EquivalenceProduit(
+CREATE OR REPLACE TABLE EquivalenceProduit(
     idEquivalenceProduit INT PRIMARY KEY AUTO_INCREMENT,
     idProduit INT,
     quantite DOUBLE,
@@ -42,16 +42,19 @@ CREATE  TABLE EquivalenceProduit(
     prix DOUBLE
 );
 
-CREATE  TABLE ProduitBesoin(
+CREATE OR REPLACE TABLE ProduitBesoin(
     idProduitBesoin INT PRIMARY KEY AUTO_INCREMENT,
     idProduit INT,
     idBesoin INT
 );
-CREATE  TABLE Donnation(
+CREATE OR REPLACE TABLE Donnation(
     idDonnation INT PRIMARY KEY AUTO_INCREMENT,
     idDon INT,
     idProduit INT,
     quantiteProduit DECIMAL(10,2)
 );
 
-
+CREATE OR REPLACE TABLE type(
+    idType INT PRIMARY KEY AUTO_INCREMENT,
+    valType VARCHAR(100)
+);

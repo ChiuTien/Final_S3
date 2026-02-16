@@ -7,6 +7,7 @@ use app\controllers\ControllerDon;
 use app\controllers\ControllerDonnation;
 use app\controllers\ControllerVille;
 use app\controllers\ControllerBesoin;
+use app\controllers\ControllerType;
 use app\controllers\ControllerDispatchMere;
 use app\controllers\ControllerProduit;
 use app\models\Don;
@@ -175,27 +176,39 @@ $router->group('', function(Router $router) use ($app) {
         $controllerVille = new ControllerVille();
         $controllerProduit = new ControllerProduit();
         $controllerBesoin = new ControllerBesoin();
+        $controllerType = new ControllerType();
         
         $villes = $controllerVille->getAllVilles();
         $produits = $controllerProduit->getAllProduit();
         $besoins = $controllerBesoin->getAllBesoin();
+        $types = $controllerType->getAllTypes();
         
-        $app->render('besoinInsert', ['villes' => $villes, 'produits' => $produits, 'besoins' => $besoins]);
+        $app->render('besoinInsert', [
+            'villes' => $villes,
+            'produits' => $produits,
+            'besoins' => $besoins,
+            'types' => $types
+        ]);
     });
 
     $router->post('/besoinInsert', function() use ($app) {
         try {
             $request = $app->request();
             $idVille = $request->data->idVille ?? null;
-            $produits = $request->data->produits ?? [];
+            $valBesoin = $request->data->valBesoin ?? null;
+            $idType = $request->data->idType ?? null;
 
-            if (!$idVille || empty($produits)) {
-                $app->view()->set('error', 'La ville et au moins un produit sont requis');
+            if (!$idVille || !$valBesoin || !$idType) {
+                $app->view()->set('error', 'La ville, la description et le type sont requis');
                 $app->redirect('/besoinInsert');
                 return;
             }
 
-            $besoin = new \app\models\Besoin(null, $idVille, 'Besoin enregistré');
+            $besoin = new \app\models\Besoin();
+            $besoin->setIdVille($idVille);
+            $besoin->setValBesoin($valBesoin);
+            $besoin->setIdType($idType);
+
             $controllerBesoin = new ControllerBesoin();
             $controllerBesoin->createBesoin($besoin);
             
@@ -211,6 +224,37 @@ $router->group('', function(Router $router) use ($app) {
         $controllerProduit = new ControllerProduit();
         $produits = $controllerProduit->getAllProduit();
         $app->render('produitInsert', ['produits' => $produits]);
+    });
+
+    // Routes pour Type
+    $router->get('/typeInsert', function() use ($app) {
+        $controllerType = new ControllerType();
+        $types = $controllerType->getAllTypes();
+        $app->render('typeInsert', ['types' => $types]);
+    });
+
+    $router->post('/typeInsert', function() use ($app) {
+        try {
+            $request = $app->request();
+            $valType = $request->data->valType ?? null;
+
+            if (!$valType) {
+                $app->view()->set('error', 'Le libellé du type est requis');
+                $app->redirect('/typeInsert');
+                return;
+            }
+
+            $type = new \app\models\Type();
+            $type->setValType($valType);
+
+            $controllerType = new ControllerType();
+            $controllerType->addType($type);
+
+            $app->redirect('/typeInsert');
+        } catch (\Exception $e) {
+            $app->view()->set('error', 'Erreur: ' . $e->getMessage());
+            $app->redirect('/typeInsert');
+        }
     });
 
     $router->post('/produitInsert', function() use ($app) {

@@ -50,6 +50,31 @@
                         </div>
 
                         <div class="form-group">
+                            <label class="form-label" for="valBesoin">
+                                <i class="fas fa-align-left"></i> Description du besoin
+                            </label>
+                            <textarea class="form-control" id="valBesoin" name="valBesoin" rows="3" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="idType">
+                                <i class="fas fa-tag"></i> Type
+                            </label>
+                            <select class="form-control" id="idType" name="idType" required>
+                                <option value="">Sélectionnez un type</option>
+                                <?php if(isset($types) && count($types) > 0): ?>
+                                    <?php foreach($types as $type): ?>
+                                        <option value="<?= is_object($type) ? $type->getIdType() : (isset($type['idType']) ? $type['idType'] : '') ?>">
+                                            <?= htmlspecialchars(is_object($type) ? $type->getValType() : (isset($type['valType']) ? $type['valType'] : '')) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <option value="1">Type 1</option>
+                                <?php endif; ?>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
                             <label class="form-label">
                                 <i class="fas fa-box"></i> Produits nécessaires
                             </label>
@@ -138,6 +163,7 @@
                                 <th>ID</th>
                                 <th>Ville</th>
                                 <th>Description</th>
+                                <th>Type</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -146,7 +172,8 @@
                                 <tr>
                                     <td><?= htmlspecialchars(is_object($besoin) ? $besoin->getIdBesoin() : (isset($besoin['idBesoin']) ? $besoin['idBesoin'] : '')) ?></td>
                                     <td><?= htmlspecialchars(is_object($besoin) ? $besoin->getIdVille() : (isset($besoin['idVille']) ? $besoin['idVille'] : '')) ?></td>
-                                    <td><?= htmlspecialchars(is_object($besoin) ? $besoin->getDescriptionBesoin() : (isset($besoin['descriptionBesoin']) ? $besoin['descriptionBesoin'] : '')) ?></td>
+                                    <td><?= htmlspecialchars(is_object($besoin) ? $besoin->getValBesoin() : (isset($besoin['valBesoin']) ? $besoin['valBesoin'] : '')) ?></td>
+                                    <td><?= htmlspecialchars(is_object($besoin) ? $besoin->getIdType() : (isset($besoin['idType']) ? $besoin['idType'] : '')) ?></td>
                                     <td>
                                         <button class="btn btn-sm btn-outline-primary">
                                             <i class="fas fa-edit"></i> Modifier

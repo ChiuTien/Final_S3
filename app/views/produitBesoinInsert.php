@@ -58,7 +58,7 @@
                                 <?php if(isset($besoins) && count($besoins) > 0): ?>
                                     <?php foreach($besoins as $besoin): ?>
                                         <option value="<?= is_object($besoin) ? $besoin->getIdBesoin() : (isset($besoin['idBesoin']) ? $besoin['idBesoin'] : '') ?>">
-                                            <?= htmlspecialchars(is_object($besoin) ? ($besoin->getIdBesoin() . ' - ' . $besoin->getDescriptionBesoin()) : (isset($besoin['idBesoin']) ? ($besoin['idBesoin'] . ' - ' . (isset($besoin['descriptionBesoin']) ? $besoin['descriptionBesoin'] : '')) : '')) ?>
+                                            <?= htmlspecialchars(is_object($besoin) ? ($besoin->getIdBesoin() . ' - ' . $besoin->getValBesoin()) : (isset($besoin['idBesoin']) ? ($besoin['idBesoin'] . ' - ' . (isset($besoin['valBesoin']) ? $besoin['valBesoin'] : '')) : '')) ?>
                                         </option>
                                     <?php endforeach; ?>
                                 <?php else: ?>
