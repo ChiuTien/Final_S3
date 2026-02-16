@@ -8,7 +8,7 @@ use app\controllers\ControllerDonnation;
 use app\controllers\ControllerVille;
 use app\controllers\ControllerBesoin;
 use app\controllers\ControllerDispatchMere;
-    use app\controllers\ControllerProduit;
+use app\controllers\ControllerProduit;
 use app\models\Don;
 use app\models\Donnation;
 
@@ -28,8 +28,15 @@ $router->group('', function(Router $router) use ($app) {
         $app->render('besoins');
     });
 
+    // Route pour afficher la liste des dispatch mère
     $router->get('/dispatch', function() use ($app) {
         $app->render('dispatch');
+    });
+
+    // Route pour afficher les détails d'une dispatch mère et ses filles
+    $router->get('/dispatchDetail', function() use ($app) {
+        $idDispatchMere = $_GET['id'] ?? null;
+        $app->render('dispatchDetail', ['mereId' => $idDispatchMere]);
     });
 
     // Route pour la page d'accueil
@@ -128,6 +135,185 @@ $router->group('', function(Router $router) use ($app) {
             $app->view()->set('error', 'Erreur lors de l\'insertion: ' . $e->getMessage());
             $app->view()->set('produits', $produitsData);
             $app->render('donInsert');
+        }
+    });
+
+    // Routes pour Ville
+    $router->get('/villeInsert', function() use ($app) {
+        $controllerVille = new ControllerVille();
+        $villes = $controllerVille->getAllVilles();
+        $app->render('villeInsert', ['villes' => $villes]);
+    });
+
+    $router->post('/villeInsert', function() use ($app) {
+        try {
+            $request = $app->request();
+            $nomVille = $request->data->nomVille ?? null;
+            $idRegion = $request->data->idRegion ?? null;
+
+            if (!$nomVille || !$idRegion) {
+                $controllerVille = new ControllerVille();
+                $villes = $controllerVille->getAllVilles();
+                $app->view()->set('error', 'Le nom et la région sont requis');
+                $app->view()->set('villes', $villes);
+                $app->render('villeInsert');
+                return;
+            }
+
+            $ville = new \app\models\Ville(null, $nomVille, $idRegion);
+            $controllerVille = new ControllerVille();
+            $controllerVille->addVille($ville);
+            $app->redirect('/villeInsert');
+        } catch (\Exception $e) {
+            $app->view()->set('error', 'Erreur: ' . $e->getMessage());
+            $app->render('villeInsert');
+        }
+    });
+
+    // Routes pour Besoin
+    $router->get('/besoinInsert', function() use ($app) {
+        $controllerVille = new ControllerVille();
+        $controllerProduit = new ControllerProduit();
+        $controllerBesoin = new ControllerBesoin();
+        
+        $villes = $controllerVille->getAllVilles();
+        $produits = $controllerProduit->getAllProduit();
+        $besoins = $controllerBesoin->getAllBesoin();
+        
+        $app->render('besoinInsert', ['villes' => $villes, 'produits' => $produits, 'besoins' => $besoins]);
+    });
+
+    $router->post('/besoinInsert', function() use ($app) {
+        try {
+            $request = $app->request();
+            $idVille = $request->data->idVille ?? null;
+            $produits = $request->data->produits ?? [];
+
+            if (!$idVille || empty($produits)) {
+                $app->view()->set('error', 'La ville et au moins un produit sont requis');
+                $app->redirect('/besoinInsert');
+                return;
+            }
+
+            $besoin = new \app\models\Besoin(null, $idVille, 'Besoin enregistré');
+            $controllerBesoin = new ControllerBesoin();
+            $controllerBesoin->createBesoin($besoin);
+            
+            $app->redirect('/besoinInsert');
+        } catch (\Exception $e) {
+            $app->view()->set('error', 'Erreur: ' . $e->getMessage());
+            $app->redirect('/besoinInsert');
+        }
+    });
+
+    // Routes pour Produit
+    $router->get('/produitInsert', function() use ($app) {
+        $controllerProduit = new ControllerProduit();
+        $produits = $controllerProduit->getAllProduit();
+        $app->render('produitInsert', ['produits' => $produits]);
+    });
+
+    $router->post('/produitInsert', function() use ($app) {
+        try {
+            $request = $app->request();
+            $valProduit = $request->data->valProduit ?? null;
+            $idType = $request->data->idType ?? null;
+
+            if (!$valProduit || !$idType) {
+                $app->view()->set('error', 'Le nom et le type sont requis');
+                $app->redirect('/produitInsert');
+                return;
+            }
+
+            $produit = new \app\models\Produit();
+            $produit->setValProduit($valProduit);
+            $produit->setIdType($idType);
+            
+            $controllerProduit = new ControllerProduit();
+            $controllerProduit->createProduit($produit);
+            
+            $app->redirect('/produitInsert');
+        } catch (\Exception $e) {
+            $app->view()->set('error', 'Erreur: ' . $e->getMessage());
+            $app->redirect('/produitInsert');
+        }
+    });
+
+    // Routes pour ProduitBesoin
+    $router->get('/produitBesoinInsert', function() use ($app) {
+        $controllerProduit = new ControllerProduit();
+        $controllerBesoin = new ControllerBesoin();
+        
+        $produits = $controllerProduit->getAllProduit();
+        $besoins = $controllerBesoin->getAllBesoin();
+        
+        $app->render('produitBesoinInsert', ['produits' => $produits, 'besoins' => $besoins]);
+    });
+
+    $router->post('/produitBesoinInsert', function() use ($app) {
+        try {
+            $request = $app->request();
+            $idProduit = $request->data->idProduit ?? null;
+            $idBesoin = $request->data->idBesoin ?? null;
+
+            if (!$idProduit || !$idBesoin) {
+                $app->view()->set('error', 'Le produit et le besoin sont requis');
+                $app->redirect('/produitBesoinInsert');
+                return;
+            }
+
+            $produitBesoin = new \app\models\ProduitBesoin();
+            $produitBesoin->setIdProduit($idProduit);
+            $produitBesoin->setIdBesoin($idBesoin);
+            
+            $controllerProduitBesoin = new \app\controllers\ControllerProduitBesoin();
+            $controllerProduitBesoin->createProduitBesoin($produitBesoin);
+            
+            $app->redirect('/produitBesoinInsert');
+        } catch (\Exception $e) {
+            $app->view()->set('error', 'Erreur: ' . $e->getMessage());
+            $app->redirect('/produitBesoinInsert');
+        }
+    });
+
+    // Routes pour EquivalenceProduit
+    $router->get('/equivalenceProduitInsert', function() use ($app) {
+        $controllerProduit = new ControllerProduit();
+        $controllerEquivalence = new \app\controllers\ControllerEquivalenceProduit();
+        
+        $produits = $controllerProduit->getAllProduit();
+        $equivalences = $controllerEquivalence->getAllEquivalenceProduit();
+        
+        $app->render('equivalenceProduitInsert', ['produits' => $produits, 'equivalences' => $equivalences]);
+    });
+
+    $router->post('/equivalenceProduitInsert', function() use ($app) {
+        try {
+            $request = $app->request();
+            $idProduit = $request->data->idProduit ?? null;
+            $quantite = $request->data->quantite ?? null;
+            $prix = $request->data->prix ?? null;
+            $val = $request->data->val ?? null;
+
+            if (!$idProduit || !$quantite || !$prix || !$val) {
+                $app->view()->set('error', 'Tous les champs sont requis');
+                $app->redirect('/equivalenceProduitInsert');
+                return;
+            }
+
+            $equivalence = new \app\models\EquivalenceProduit();
+            $equivalence->setIdProduit($idProduit);
+            $equivalence->setQuantite($quantite);
+            $equivalence->setPrix($prix);
+            $equivalence->setVal($val);
+            
+            $controllerEquivalence = new \app\controllers\ControllerEquivalenceProduit();
+            $controllerEquivalence->createEquivalenceProduit($equivalence);
+            
+            $app->redirect('/equivalenceProduitInsert');
+        } catch (\Exception $e) {
+            $app->view()->set('error', 'Erreur: ' . $e->getMessage());
+            $app->redirect('/equivalenceProduitInsert');
         }
     });
         
