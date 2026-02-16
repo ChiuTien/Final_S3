@@ -7,8 +7,8 @@ use app\repository\RepDispatchFille;
 class ControllerDispatchFille {
     private RepDispatchFille $repo;
 
-    public function __construct(RepDispatchFille $repo) {
-        $this->repo = $repo;
+    public function __construct() {
+        $this->repo = new RepDispatchFille();
     }
 
     public function addDispatchFille(DispatchFille $d): void {

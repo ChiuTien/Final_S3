@@ -1,37 +1,22 @@
 <?php
+use app\controllers\ControllerDispatchFille;
+use app\controllers\ControllerDispatchMere;
+use app\controllers\ControllerProduit;
+use app\controllers\ControllerVille;
+
 include __DIR__ . '/includes/header.php';
 
-$meres = [];
-$filles = [];
-try {
-    if (class_exists('\app\repository\RepDispatchMere') && class_exists('\app\controllers\ControllerDispatchMere')) {
-        $repM = new \app\repository\RepDispatchMere(Flight::db());
-        $ctrlM = new \app\controllers\ControllerDispatchMere($repM);
-        $meres = $ctrlM->getAllDispatchMeres();
-    }
-    if (class_exists('\app\repository\RepDispatchFille') && class_exists('\app\controllers\ControllerDispatchFille')) {
-        $repF = new \app\repository\RepDispatchFille(Flight::db());
-        $ctrlF = new \app\controllers\ControllerDispatchFille($repF);
-        $filles = $ctrlF->getAllDispatchFilles();
-    }
-} catch (\Throwable $e) {
-    $meres = [];
-    $filles = [];
-}
 
-if (empty($meres)) {
-    $meres = [
-        ['id_dispatch_mere' => 1, 'id_ville' => 3, 'date_dispatch' => '2026-02-16 10:30'],
-        ['id_dispatch_mere' => 2, 'id_ville' => 1, 'date_dispatch' => '2026-02-15 09:00']
-    ];
-}
-if (empty($filles)) {
-    $filles = [
-        ['id_dispatch_fille' => 1, 'id_dispatch_mere' => 1, 'id_produit' => 1, 'quantite' => 250],
-        ['id_dispatch_fille' => 2, 'id_dispatch_mere' => 1, 'id_produit' => 2, 'quantite' => 100]
-    ];
-}
 
+$dM = new ControllerDispatchMere();
+$meres = $dM->getAllDispatchMeres();
+
+$dF = new ControllerDispatchFille();
+$filles = $dF->getAllDispatchFilles();
+
+$cv = new ControllerVille();
+
+$prod = new ControllerProduit();
 ?>
 
 <div class="container">
@@ -46,13 +31,12 @@ if (empty($filles)) {
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
-                        <tr><th>ID</th><th>Ville (id)</th><th>Date</th></tr>
+                        <tr><th>Ville</th><th>Date et heure</th></tr>
                     </thead>
                     <tbody>
                         <?php foreach ($meres as $m): ?>
                             <tr>
-                                <td><?= htmlspecialchars($m['id_dispatch_mere'] ?? $m['id'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($m['id_ville'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($cv->getVilleById($m['id_ville'])->getValVille() ?? '') ?></td>
                                 <td><?= htmlspecialchars($m['date_dispatch'] ?? '') ?></td>
                             </tr>
                         <?php endforeach; ?>
@@ -68,14 +52,12 @@ if (empty($filles)) {
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
-                        <tr><th>ID</th><th>ID Mère</th><th>ID Produit</th><th>Quantité</th></tr>
+                        <tr><th>Produit</th><th>Quantité</th></tr>
                     </thead>
                     <tbody>
                         <?php foreach ($filles as $f): ?>
                             <tr>
-                                <td><?= htmlspecialchars($f['id_dispatch_fille'] ?? $f['id'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($f['id_dispatch_mere'] ?? '') ?></td>
-                                <td><?= htmlspecialchars($f['id_produit'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($prod->getProduitById($f['id_produit'])->getValProduit() ?? '') ?></td>
                                 <td><?= htmlspecialchars($f['quantite'] ?? '') ?></td>
                             </tr>
                         <?php endforeach; ?>

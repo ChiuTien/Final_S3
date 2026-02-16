@@ -2,6 +2,7 @@
 namespace app\repository;
 
 
+use Flight;
 use PDO;
 use app\models\DispatchFille;
 
@@ -9,13 +10,13 @@ class RepDispatchFille
 {
     private PDO $db;
 
-    public function __construct(PDO $db)
+    public function __construct()
     {
-        $this->db = $db;
+        $this->db = Flight::db();
     }
 
     public function addDispatchFille($dispatch): void {
-        $sql = "INSERT INTO dispatch_fille (id_dispatch_mere, id_produit, quantite) VALUES (:id_dispatch_mere, :id_produit, :quantite)";
+        $sql = "INSERT INTO Dispatch_fille (id_dispatch_mere, id_produit, quantite) VALUES (:id_dispatch_mere, :id_produit, :quantite)";
         $stmt = $this->db->prepare($sql);
         $stmt->bindValue(':id_dispatch_mere', $dispatch->getIdDispatchMere(), PDO::PARAM_INT);
         $stmt->bindValue(':id_produit', $dispatch->getIdProduit(), PDO::PARAM_INT);
@@ -24,14 +25,14 @@ class RepDispatchFille
     }
 
     public function removeDispatchFille($dispatch): void {
-        $sql = "DELETE FROM dispatch_fille WHERE id_dispatch_fille = :id";
+        $sql = "DELETE FROM Dispatch_fille WHERE id_dispatch_fille = :id";
         $stmt = $this->db->prepare($sql);
         $stmt->bindValue(':id', $dispatch->getIdDispatchFille(), PDO::PARAM_INT);
         $stmt->execute();
     }
 
     public function getDispatchFilleById($id): DispatchFille {
-        $sql = "SELECT * FROM dispatch_fille WHERE id_dispatch_fille = :id";
+        $sql = "SELECT * FROM Dispatch_fille WHERE id_dispatch_fille = :id";
         $stmt = $this->db->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
@@ -39,13 +40,13 @@ class RepDispatchFille
     }
 
     public function getAllDispatchFilles() {
-        $sql = "SELECT * FROM dispatch_fille";
+        $sql = "SELECT * FROM Dispatch_fille";
         $stmt = $this->db->query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getFillesByMere($mereId) {
-        $sql = "SELECT * FROM dispatch_fille WHERE id_dispatch_mere = :id_dispatch_mere";
+        $sql = "SELECT * FROM Dispatch_fille WHERE id_dispatch_mere = :id_dispatch_mere";
         $stmt = $this->db->prepare($sql);
         $stmt->bindValue(':id_dispatch_mere', $mereId, PDO::PARAM_INT);
         $stmt->execute();
@@ -53,7 +54,7 @@ class RepDispatchFille
     }
 
     public function updateDispatchFille($dispatch): void {
-        $sql = "UPDATE dispatch_fille SET id_dispatch_mere = :id_dispatch_mere, id_produit = :id_produit, quantite = :quantite WHERE id_dispatch_fille = :id";
+        $sql = "UPDATE Dispatch_fille SET id_dispatch_mere = :id_dispatch_mere, id_produit = :id_produit, quantite = :quantite WHERE id_dispatch_fille = :id";
         $stmt = $this->db->prepare($sql);
         $stmt->bindValue(':id_dispatch_mere', $dispatch->getIdDispatchMere(), PDO::PARAM_INT);
         $stmt->bindValue(':id_produit', $dispatch->getIdProduit(), PDO::PARAM_INT);

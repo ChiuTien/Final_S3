@@ -9,7 +9,7 @@ CREATE  TABLE Besoin(
     idType INT
 );
 
-CREATE  TABLE Region(
+CREATE OR REPLACE TABLE Region(
     idRegion INT PRIMARY KEY AUTO_INCREMENT,
     valRegion VARCHAR(100)
 );

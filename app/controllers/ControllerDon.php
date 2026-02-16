@@ -1,5 +1,5 @@
 <?php 
-namespace App\Controllers;
+namespace app\controllers;
 use app\models\Don;
 use app\repository\RepDon;
 class ControllerDon {
@@ -29,7 +29,9 @@ class ControllerDon {
     public function getNombreDons() {
         $dons = $this->getAllDons();
         return count($dons);
-        //Ceci devrait etre la
+    }
+    public function calculerEtMettreAJourPrixTotal(int $idDon): void {
+        $this->repDon->calculerEtMettreAJourPrixTotal($idDon);
     }
 }
 
