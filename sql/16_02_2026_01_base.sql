@@ -4,21 +4,8 @@ USE BNGRC;
 
 CREATE OR REPLACE TABLE Besoin(
     idBesoin INT PRIMARY KEY AUTO_INCREMENT,
-    idTypeBesoin INT,
-    valBesoin VARCHAR(100)
-);
-
-CREATE OR REPLACE TABLE EquivalenceBesoin(
-    idEquivalenceBesoin INT PRIMARY KEY AUTO_INCREMENT,
-    idBesoin INT,
-    prixUnitaire DOUBLE,
-    quantite DOUBLE,
-    val VARCHAR(50)
-);
-
-CREATE OR REPLACE TABLE TypeBesoin(
-    idTypeBesoin INT PRIMARY KEY AUTO_INCREMENT,
-    valTypeBesoin VARCHAR(100)
+    valBesoin VARCHAR(100),
+    idType INT
 );
 
 CREATE OR REPLACE TABLE Region(
@@ -43,4 +30,17 @@ CREATE OR REPLACE TABLE Produit(
     idProduit INT PRIMARY KEY AUTO_INCREMENT,
     valProduit VARCHAR(100),
     idType INT
+);
+
+CREATE OR REPLACE TABLE EquivalenceProduit(
+    idEquivalenceProduit INT PRIMARY KEY AUTO_INCREMENT,
+    idProduit INT,
+    quantite DOUBLE,
+    prix DOUBLE
+);
+
+CREATE OR REPLACE TABLE ProduitBesoin(
+    idProduitBesoin INT PRIMARY KEY AUTO_INCREMENT,
+    idProduit INT,
+    idBesoin INT
 );
