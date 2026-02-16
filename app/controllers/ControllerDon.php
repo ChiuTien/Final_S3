@@ -29,6 +29,7 @@ class ControllerDon {
     public function getNombreDons() {
         $dons = $this->getAllDons();
         return count($dons);
+        //Ceci devrait etre la
     }
 }
 
