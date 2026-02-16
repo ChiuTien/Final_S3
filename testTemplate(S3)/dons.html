@@ -1,0 +1,217 @@
+<!-- Inclusion du header -->
+<script>
+    fetch('includes/header.html')
+        .then(response => response.text())
+        .then(data => {
+            document.body.insertAdjacentHTML('afterbegin', data);
+            
+            // Marquer le lien actif
+            setTimeout(() => {
+                document.querySelectorAll('.navbar-menu a').forEach(link => {
+                    link.classList.remove('active');
+                    if(link.getAttribute('href') === 'dons.html') {
+                        link.classList.add('active');
+                    }
+                });
+            }, 100);
+        });
+</script>
+
+<div class="container">
+    <div class="page-title">
+        <h2>
+            <i class="fas fa-gift"></i>
+            Liste des dons
+        </h2>
+        <p>Consultez et filtrez les dons par ville</p>
+    </div>
+
+    <!-- Filtres -->
+    <div class="filter-section">
+        <div class="filter-group">
+            <label for="filterDonVille"><i class="fas fa-filter"></i> Filtrer par ville</label>
+            <select class="filter-select" id="filterDonVille" onchange="filterDonsByVille()">
+                <option value="">Toutes les villes</option>
+                <option value="Antananarivo">Antananarivo</option>
+                <option value="Toamasina">Toamasina</option>
+                <option value="Mahajanga">Mahajanga</option>
+                <option value="Fianarantsoa">Fianarantsoa</option>
+                <option value="Toliara">Toliara</option>
+                <option value="Antsiranana">Antsiranana</option>
+                <option value="Non attribué">Non attribué</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="filterDonType">Filtrer par type</label>
+            <select class="filter-select" id="filterDonType">
+                <option value="">Tous les types</option>
+                <option value="nature">Nature</option>
+                <option value="materiaux">Matériaux</option>
+                <option value="argent">Argent</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="filterDonStatut">Filtrer par statut</label>
+            <select class="filter-select" id="filterDonStatut">
+                <option value="">Tous</option>
+                <option value="distribue">Distribué</option>
+                <option value="en-attente">En attente</option>
+                <option value="urgent">Urgent</option>
+            </select>
+        </div>
+        <button class="btn btn-primary">
+            <i class="fas fa-search"></i> Appliquer les filtres
+        </button>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="stats-container">
+        <div class="stat-item">
+            <i class="fas fa-gift"></i>
+            <div class="stat-number">89</div>
+            <div class="stat-label">Dons totaux</div>
+        </div>
+        <div class="stat-item" style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%);">
+            <i class="fas fa-check-circle"></i>
+            <div class="stat-number">54</div>
+            <div class="stat-label">Dons distribués</div>
+        </div>
+        <div class="stat-item" style="background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);">
+            <i class="fas fa-clock"></i>
+            <div class="stat-number">25</div>
+            <div class="stat-label">En attente</div>
+        </div>
+        <div class="stat-item" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div class="stat-number">10</div>
+            <div class="stat-label">Urgents</div>
+        </div>
+    </div>
+
+    <!-- Liste des dons -->
+    <div class="card">
+        <div class="card-header">
+            <h5>Tous les dons</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Donateur</th>
+                            <th>Type</th>
+                            <th>Produit</th>
+                            <th>Quantité</th>
+                            <th>Valeur (Ar)</th>
+                            <th>Destination</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>16/02/2026</td>
+                            <td><strong>Jean R.</strong></td>
+                            <td><span class="badge" style="background-color: #3498db; color: white;">Nature</span></td>
+                            <td>Riz</td>
+                            <td>100 kg</td>
+                            <td>200 000 Ar</td>
+                            <td>Antananarivo</td>
+                            <td><span class="badge badge-success">Distribué</span></td>
+                        </tr>
+                        <tr>
+                            <td>16/02/2026</td>
+                            <td><strong>Marie L.</strong></td>
+                            <td><span class="badge" style="background-color: #27ae60; color: white;">Argent</span></td>
+                            <td>Don financier</td>
+                            <td>50 000 Ar</td>
+                            <td>50 000 Ar</td>
+                            <td>Mahajanga</td>
+                            <td><span class="badge badge-warning">En attente</span></td>
+                        </tr>
+                        <tr>
+                            <td>15/02/2026</td>
+                            <td><strong>Entreprise ABC</strong></td>
+                            <td><span class="badge" style="background-color: #6c757d; color: white;">Matériaux</span></td>
+                            <td>Tôles</td>
+                            <td>50 pièces</td>
+                            <td>1 250 000 Ar</td>
+                            <td>Toamasina</td>
+                            <td><span class="badge badge-success">Distribué</span></td>
+                        </tr>
+                        <tr>
+                            <td>14/02/2026</td>
+                            <td><strong>ONG Secours</strong></td>
+                            <td><span class="badge" style="background-color: #3498db; color: white;">Nature</span></td>
+                            <td>Huile</td>
+                            <td>200 L</td>
+                            <td>1 000 000 Ar</td>
+                            <td>Fianarantsoa</td>
+                            <td><span class="badge badge-danger">Urgent</span></td>
+                        </tr>
+                        <tr>
+                            <td>14/02/2026</td>
+                            <td><strong>Paul T.</strong></td>
+                            <td><span class="badge" style="background-color: #27ae60; color: white;">Argent</span></td>
+                            <td>Don financier</td>
+                            <td>100 000 Ar</td>
+                            <td>100 000 Ar</td>
+                            <td>Non attribué</td>
+                            <td><span class="badge badge-warning">En attente</span></td>
+                        </tr>
+                        <tr>
+                            <td>13/02/2026</td>
+                            <td><strong>Société XYZ</strong></td>
+                            <td><span class="badge" style="background-color: #6c757d; color: white;">Matériaux</span></td>
+                            <td>Clous</td>
+                            <td>100 kg</td>
+                            <td>300 000 Ar</td>
+                            <td>Toamasina</td>
+                            <td><span class="badge badge-success">Distribué</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Résumé des dons -->
+    <div class="row">
+        <div class="col-4">
+            <div class="card">
+                <div class="card-body" style="text-align: center;">
+                    <i class="fas fa-box" style="font-size: 2rem; color: var(--primary-color);"></i>
+                    <h3 style="margin: 10px 0;">2 500 kg</h3>
+                    <p>Total denrées (kg)</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card">
+                <div class="card-body" style="text-align: center;">
+                    <i class="fas fa-coins" style="font-size: 2rem; color: var(--success-color);"></i>
+                    <h3 style="margin: 10px 0;">3 500 000 Ar</h3>
+                    <p>Total dons argent</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card">
+                <div class="card-body" style="text-align: center;">
+                    <i class="fas fa-users" style="font-size: 2rem; color: var(--warning-color);"></i>
+                    <h3 style="margin: 10px 0;">32</h3>
+                    <p>Donateurs</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Inclusion du footer -->
+<script>
+    fetch('includes/footer.html')
+        .then(response => response.text())
+        .then(data => {
+            document.body.insertAdjacentHTML('beforeend', data);
+        });
+</script>
