@@ -21,30 +21,14 @@ $besoins = $ctrl->getAllBesoin();
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Ville</th>
-                            <th>Type</th>
-                            <th>Produit</th>
-                            <th>Quantité</th>
-                            <th>Prix unitaire</th>
-                            <th>Total (Ar)</th>
-                            <th>Urgence</th>
-                            <th>Date</th>
-                            <th>Statut</th>
+                            <th>Besoins</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($besoins as $b): ?>
                             <?php if (is_array($b)): ?>
                                 <tr>
-                                    <td><?= htmlspecialchars($b['ville'] ?? ($b['valVille'] ?? 'N/A')) ?></td>
-                                    <td><?= htmlspecialchars($b['type'] ?? ($b['typeName'] ?? '')) ?></td>
-                                    <td><?= htmlspecialchars($b['produit'] ?? ($b['valBesoin'] ?? '')) ?></td>
-                                    <td><?= htmlspecialchars($b['quantite'] ?? ($b['quantiteBesoin'] ?? '-')) ?></td>
-                                    <td><?= htmlspecialchars($b['prix_unitaire'] ?? '-') ?></td>
-                                    <td><?= htmlspecialchars($b['total'] ?? '-') ?></td>
-                                    <td><span class="badge <?= (stripos($b['urgence'] ?? '', 'urgent')!==false)?'badge-danger':((stripos($b['urgence'] ?? '', 'important')!==false)?'badge-warning':'badge-success') ?>"><?= htmlspecialchars($b['urgence'] ?? '') ?></span></td>
-                                    <td><?= htmlspecialchars($b['date'] ?? '') ?></td>
-                                    <td><span class="badge badge-info"><?= htmlspecialchars($b['statut'] ?? '') ?></span></td>
+                                    <td><?= htmlspecialchars($b['valBesoin'] ?? 'N/A') ?></td>
                                 </tr>
                             <?php else: ?>
                                 <tr><td colspan="9">Données non disponibles</td></tr>

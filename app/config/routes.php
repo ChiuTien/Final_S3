@@ -23,6 +23,10 @@ $router->group('', function(Router $router) use ($app) {
         $app->render('villes');
     });
 
+    $router->get('/besoins', function() use ($app) {
+        $app->render('besoins');
+    });
+
     // Route pour la page d'accueil
     $router->get('/', function() use ($app) {
 		$controllerVille = new ControllerVille();
