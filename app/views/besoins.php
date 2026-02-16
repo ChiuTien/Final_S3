@@ -1,24 +1,10 @@
 <?php
 include __DIR__ . '/includes/header.php';
 
-$besoins = [];
-try {
-    if (class_exists('\app\controllers\ControllerBesoin')) {
-        $ctrl = new \app\controllers\ControllerBesoin();
-        $besoins = $ctrl->getAllBesoin();
-    }
-} catch (\Throwable $e) {
-    $besoins = [];
-}
+use \app\controllers\ControllerBesoin;
 
-// fallback test data
-if (empty($besoins)) {
-    $besoins = [
-        ['ville' => 'Antananarivo','type'=>'Nature','produit'=>'Riz','quantite'=>'500 kg','prix_unitaire'=>'2000','total'=>'1000000','urgence'=>'important','date'=>'2026-02-16','statut'=>'Partiel'],
-        ['ville' => 'Mahajanga','type'=>'Matériaux','produit'=>'Tôles','quantite'=>'100 pièces','prix_unitaire'=>'25000','total'=>'2500000','urgence'=>'urgent','date'=>'2026-02-16','statut'=>'Non couvert'],
-        ['ville' => 'Toamasina','type'=>'Nature','produit'=>'Riz','quantite'=>'300 kg','prix_unitaire'=>'2000','total'=>'600000','urgence'=>'normal','date'=>'2026-02-15','statut'=>'Couvert']
-    ];
-}
+$ctrl = new ControllerBesoin();
+$besoins = $ctrl->getAllBesoin();
 
 ?>
 

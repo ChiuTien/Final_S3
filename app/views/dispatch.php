@@ -1,36 +1,14 @@
 <?php
 include __DIR__ . '/includes/header.php';
 
-$meres = [];
-$filles = [];
-try {
-    if (class_exists('\app\repository\RepDispatchMere') && class_exists('\app\controllers\ControllerDispatchMere')) {
-        $repM = new \app\repository\RepDispatchMere(Flight::db());
-        $ctrlM = new \app\controllers\ControllerDispatchMere($repM);
-        $meres = $ctrlM->getAllDispatchMeres();
-    }
-    if (class_exists('\app\repository\RepDispatchFille') && class_exists('\app\controllers\ControllerDispatchFille')) {
-        $repF = new \app\repository\RepDispatchFille(Flight::db());
-        $ctrlF = new \app\controllers\ControllerDispatchFille($repF);
-        $filles = $ctrlF->getAllDispatchFilles();
-    }
-} catch (\Throwable $e) {
-    $meres = [];
-    $filles = [];
-}
+use app\Controllers\ControllerDispatchFille;
+use app\controllers\ControllerDispatchMere;
 
-if (empty($meres)) {
-    $meres = [
-        ['id_dispatch_mere' => 1, 'id_ville' => 3, 'date_dispatch' => '2026-02-16 10:30'],
-        ['id_dispatch_mere' => 2, 'id_ville' => 1, 'date_dispatch' => '2026-02-15 09:00']
-    ];
-}
-if (empty($filles)) {
-    $filles = [
-        ['id_dispatch_fille' => 1, 'id_dispatch_mere' => 1, 'id_produit' => 1, 'quantite' => 250],
-        ['id_dispatch_fille' => 2, 'id_dispatch_mere' => 1, 'id_produit' => 2, 'quantite' => 100]
-    ];
-}
+$dM = new ControllerDispatchMere();
+$meres = $dM->getAllDispatchMeres();
+
+$dF = new ControllerDispatchFille();
+$filles = $dF->getAllDispatchFilles();
 
 ?>
 

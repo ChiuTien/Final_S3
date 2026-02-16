@@ -2,6 +2,7 @@
 namespace app\repository;
 
 
+use Flight;
 use PDO;
 use app\models\DispatchFille;
 
@@ -9,9 +10,9 @@ class RepDispatchFille
 {
     private PDO $db;
 
-    public function __construct(PDO $db)
+    public function __construct()
     {
-        $this->db = $db;
+        $this->db = Flight::db();
     }
 
     public function addDispatchFille($dispatch): void {
