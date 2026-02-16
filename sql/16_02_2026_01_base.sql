@@ -3,9 +3,10 @@
 CREATE DATABASE BNGRC;
 USE BNGRC;
 
-CREATE  TABLE Besoin(
+CREATE OR REPLACE TABLE Besoin(
     idBesoin INT PRIMARY KEY AUTO_INCREMENT,
     valBesoin VARCHAR(100),
+    idVille INT,
     idType INT
 );
 
