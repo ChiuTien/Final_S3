@@ -15,11 +15,11 @@
                 <div class="footer-section">
                     <h5>Liens rapides</h5>
                     <ul>
-                        <li><a href="index.html"><i class="fas fa-chevron-right"></i>Tableau de bord</a></li>
-                        <li><a href="villes.html"><i class="fas fa-chevron-right"></i>Villes sinistrées</a></li>
-                        <li><a href="besoins.html"><i class="fas fa-chevron-right"></i>Besoins</a></li>
-                        <li><a href="dons.html"><i class="fas fa-chevron-right"></i>Dons</a></li>
-                        <li><a href="dispatch.html"><i class="fas fa-chevron-right"></i>Dispatch</a></li>
+                        <li><a href="<?= BASE_URL ?>index.html"><i class="fas fa-chevron-right"></i>Tableau de bord</a></li>
+                        <li><a href="<?= BASE_URL ?>villes.html"><i class="fas fa-chevron-right"></i>Villes sinistrées</a></li>
+                        <li><a href="<?= BASE_URL ?>besoins.html"><i class="fas fa-chevron-right"></i>Besoins</a></li>
+                        <li><a href="<?= BASE_URL ?>dons.html"><i class="fas fa-chevron-right"></i>Dons</a></li>
+                        <li><a href="<?= BASE_URL ?>dispatch.html"><i class="fas fa-chevron-right"></i>Dispatch</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">

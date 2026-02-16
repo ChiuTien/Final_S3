@@ -1,7 +1,7 @@
 <!-- Inclusion du header -->
-<link rel="import" href="includes/header.html">
+<?php include __DIR__ . '/layouts/header.php'; ?>
 <script>
-    fetch('includes/header.html')
+    fetch('<?= BASE_URL ?>includes/header.html')
         .then(response => response.text())
         .then(data => {
             document.body.insertAdjacentHTML('afterbegin', data);
@@ -227,7 +227,7 @@
 
 <!-- Inclusion du footer -->
 <script>
-    fetch('includes/footer.html')
+    fetch('<?= BASE_URL ?>includes/footer.html')
         .then(response => response.text())
         .then(data => {
             document.body.insertAdjacentHTML('beforeend', data);

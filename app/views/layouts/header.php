@@ -4,17 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BNGRC - Gestion des dons</title>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Notre CSS personnalisé -->
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>css/style.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>bootstrap/css/bootstrap.min.css">
 </head>
 <body>
     <!-- Header / Navbar -->
     <nav class="navbar">
         <div class="container">
-            <a href="index.html" class="navbar-brand">
+            <a href="<?= BASE_URL ?>index.html" class="navbar-brand">
                 <i class="fas fa-hand-holding-heart"></i>
                 BNGRC
             </a>
@@ -22,11 +20,11 @@
                 <i class="fas fa-bars"></i>
             </div>
             <ul class="navbar-menu" id="navbarMenu">
-                <li><a href="index.html"><i class="fas fa-dashboard"></i>Tableau de bord</a></li>
-                <li><a href="villes.html"><i class="fas fa-city"></i>Villes</a></li>
-                <li><a href="besoins.html"><i class="fas fa-list"></i>Besoins</a></li>
-                <li><a href="dons.html"><i class="fas fa-gift"></i>Dons</a></li>
-                <li><a href="dispatch.html"><i class="fas fa-truck"></i>Dispatch</a></li>
+                <li><a href="<?= BASE_URL ?>index.html"><i class="fas fa-dashboard"></i>Tableau de bord</a></li>
+                <li><a href="<?= BASE_URL ?>villes.html"><i class="fas fa-city"></i>Villes</a></li>
+                <li><a href="<?= BASE_URL ?>besoins.html"><i class="fas fa-list"></i>Besoins</a></li>
+                <li><a href="<?= BASE_URL ?>dons.html"><i class="fas fa-gift"></i>Dons</a></li>
+                <li><a href="<?= BASE_URL ?>dispatch.html"><i class="fas fa-truck"></i>Dispatch</a></li>
                 <li class="dropdown">
                     <a href="#"><i class="fas fa-plus-circle"></i>Insertions <i class="fas fa-chevron-down" style="font-size: 12px; margin-left: 5px;"></i></a>
                     <div class="dropdown-content">
