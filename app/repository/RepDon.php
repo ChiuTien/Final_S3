@@ -13,15 +13,18 @@
         }
 
         // Méthodes pour interagir avec la table Don
-        public function addDon(Don $don):void {
+        public function addDon(Don $don): int {
             try {
                 $date = $don->getDateDon()->format('Y-m-d H:i:s');
                 $totalPrix = $don->getTotalPrix();
                 $sql = "INSERT INTO Don(dateDon, totalPrix) VALUES (:dateDon, :totalPrix)";
                 $stmt = $this->db->prepare($sql);
                 $stmt->bindValue(':dateDon', $date, PDO::PARAM_STR);
-                $stmt->bindValue(':totalPrix', $totalPrix, PDO::PARAM_INT);
+                $stmt->bindValue(':totalPrix', $totalPrix, PDO::PARAM_STR);
                 $stmt->execute();
+                
+                // Retourner l'ID du don inséré
+                return (int)$this->db->lastInsertId();
             } catch (\Throwable $th) {
                 throw $th;
             }
