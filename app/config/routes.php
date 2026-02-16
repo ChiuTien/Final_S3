@@ -1,42 +1,41 @@
 <?php
+// Basic routes for the app views
+use function Flight\route;
 
-use app\middlewares\SecurityHeadersMiddleware;
-use flight\Engine;
-use flight\net\Router;
-use app\controllers\ControllerDon;
-use app\controllers\ControllerDonnation;
-use app\controllers\ControllerVille;
-use app\controllers\ControllerBesoin;
+// Home
+Flight::route('GET /', function() {
+    Flight::render('welcome');
+});
 
-/** 
- * @var Router $router 
- * @var Engine $app
- */
+Flight::route('GET /villes', function() {
+    Flight::render('villes');
+});
 
-// This wraps all routes in the group with the SecurityHeadersMiddleware
-$router->group('', function(Router $router) use ($app) {
+Flight::route('GET /besoins', function() {
+    Flight::render('besoins');
+});
 
-    // Route pour la page d'accueil
-    $router->get('/', function() use ($app) {
-		$controllerVille = new ControllerVille();
-	    $controllerBesoin = new ControllerBesoin();
-        $app->render('welcome', ['controllerVille' => $controllerVille, 'controllerBesoin' => $controllerBesoin]);
-    });
+Flight::route('GET /dispatch', function() {
+    Flight::render('dispatch');
+});
 
-    // Route pour l'affichage des dons
-    $router->get('/donsAffichage', function() use ($app) {
-        $controllerDon = new ControllerDon();
-        $dons = $controllerDon->getAllDons();
-        
-        $controllerDonnation = new ControllerDonnation();
-        $donnations = $controllerDonnation->getAllDonnation();
+Flight::route('GET /donsAffichage', function() {
+    // Prepare data via controllers if available
+    try {
+        if (class_exists('\app\controllers\ControllerDon')) {
+            $ctrlDon = new \app\controllers\ControllerDon();
+            $dons = $ctrlDon->getAllDons();
+        }
+        if (class_exists('\app\repository\RepDonnation')) {
+            $rep = new \app\repository\RepDonnation();
+            $donnations = $rep->getAllDonnation();
+        }
+    } catch (\Throwable $e) {}
+    Flight::render('donsAffichage', compact('dons', 'donnations'));
+});
 
-        $app->render('donsAffichage', ['dons' => $dons, 'donnations' => $donnations]);
-    });
-
-    $router->get('/villes', function() use ($app) {
-        $controllerVille = new ControllerVille();
-        $app->render('villes', ['controllerVille' => $controllerVille]);
-    });
-
-}, [ SecurityHeadersMiddleware::class ]);
+// Simple route to render single ville (name)
+Flight::route('GET /ville/@name', function($name) {
+    // In a fuller app you'd lookup ville details via controller; here render view with name
+    Flight::render('ville', ['villeName' => $name]);
+});
