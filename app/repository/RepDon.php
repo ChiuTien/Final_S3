@@ -8,8 +8,8 @@
         //Attribut 
         private PDO $db;
 
-        public function __construct(PDO $db) {
-            $this->db = $db;
+        public function __construct() {
+            $this->db = Flight::db();
         }
 
         // Méthodes pour interagir avec la table Don

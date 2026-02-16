@@ -45,3 +45,9 @@ CREATE OR REPLACE TABLE ProduitBesoin(
     idProduit INT,
     idBesoin INT
 );
+CREATE OR REPLACE TABLE Donnation(
+    idDonnation INT PRIMARY KEY AUTO_INCREMENT,
+    idDon INT,
+    idProduit INT,
+    quantiteProduit DECIMAL(10,2)
+);
