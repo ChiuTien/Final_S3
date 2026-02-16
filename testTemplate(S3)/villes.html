@@ -1,0 +1,209 @@
+<!-- Inclusion du header -->
+<script>
+    fetch('includes/header.html')
+        .then(response => response.text())
+        .then(data => {
+            document.body.insertAdjacentHTML('afterbegin', data);
+            
+            // Marquer le lien actif
+            setTimeout(() => {
+                document.querySelectorAll('.navbar-menu a').forEach(link => {
+                    link.classList.remove('active');
+                    if(link.getAttribute('href') === 'villes.html') {
+                        link.classList.add('active');
+                    }
+                });
+            }, 100);
+        });
+</script>
+
+<div class="container">
+    <div class="page-title">
+        <h2>
+            <i class="fas fa-city"></i>
+            Liste des villes sinistrées
+        </h2>
+        <p>Consultez toutes les villes et leurs détails</p>
+    </div>
+
+    <!-- Barre de recherche -->
+    <div class="search-bar">
+        <input type="text" class="search-input" id="searchInput" placeholder="Rechercher une ville...">
+        <button class="btn btn-primary" onclick="searchItems()">
+            <i class="fas fa-search"></i> Rechercher
+        </button>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="stats-container">
+        <div class="stat-item">
+            <i class="fas fa-city"></i>
+            <div class="stat-number">15</div>
+            <div class="stat-label">Villes totales</div>
+        </div>
+        <div class="stat-item" style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);">
+            <i class="fas fa-ambulance"></i>
+            <div class="stat-number">8</div>
+            <div class="stat-label">Villes urgentes</div>
+        </div>
+        <div class="stat-item" style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%);">
+            <i class="fas fa-check-circle"></i>
+            <div class="stat-number">5</div>
+            <div class="stat-label">Villes couvertes</div>
+        </div>
+        <div class="stat-item" style="background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div class="stat-number">2</div>
+            <div class="stat-label">Villes critiques</div>
+        </div>
+    </div>
+
+    <!-- Liste des villes -->
+    <div class="card">
+        <div class="card-header">
+            <h5>Toutes les villes</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ville</th>
+                            <th>Région</th>
+                            <th>Population sinistrée</th>
+                            <th>Besoins</th>
+                            <th>Dons reçus</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Antananarivo</strong></td>
+                            <td>Analamanga</td>
+                            <td>5 000</td>
+                            <td>
+                                <span class="badge badge-besoin">8 besoins</span>
+                                <br><small>Riz, Huile, Tôles...</small>
+                            </td>
+                            <td>
+                                <span class="badge badge-don">5 dons</span>
+                                <br><small>Riz: 300kg</small>
+                            </td>
+                            <td><span class="badge badge-warning">Partiel</span></td>
+                            <td>
+                                <button class="view-details-btn" onclick="viewVilleDetails('Antananarivo')">
+                                    <i class="fas fa-eye"></i> Voir plus
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Toamasina</strong></td>
+                            <td>Atsinanana</td>
+                            <td>3 200</td>
+                            <td>
+                                <span class="badge badge-besoin">5 besoins</span>
+                                <br><small>Riz, Clous</small>
+                            </td>
+                            <td>
+                                <span class="badge badge-don">5 dons</span>
+                                <br><small>Total couvert</small>
+                            </td>
+                            <td><span class="badge badge-success">Couvert</span></td>
+                            <td>
+                                <button class="view-details-btn" onclick="viewVilleDetails('Toamasina')">
+                                    <i class="fas fa-eye"></i> Voir plus
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Mahajanga</strong></td>
+                            <td>Boeny</td>
+                            <td>2 800</td>
+                            <td>
+                                <span class="badge badge-besoin">10 besoins</span>
+                                <br><small>Riz, Huile, Tôles, Argent</small>
+                            </td>
+                            <td>
+                                <span class="badge badge-don">2 dons</span>
+                                <br><small>Riz: 100kg</small>
+                            </td>
+                            <td><span class="badge badge-danger">Urgent</span></td>
+                            <td>
+                                <button class="view-details-btn" onclick="viewVilleDetails('Mahajanga')">
+                                    <i class="fas fa-eye"></i> Voir plus
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Fianarantsoa</strong></td>
+                            <td>Haute Matsiatra</td>
+                            <td>4 500</td>
+                            <td>
+                                <span class="badge badge-besoin">12 besoins</span>
+                                <br><small>Riz, Huile, Médicaments</small>
+                            </td>
+                            <td>
+                                <span class="badge badge-don">3 dons</span>
+                                <br><small>Huile: 200L</small>
+                            </td>
+                            <td><span class="badge badge-danger">Urgent</span></td>
+                            <td>
+                                <button class="view-details-btn" onclick="viewVilleDetails('Fianarantsoa')">
+                                    <i class="fas fa-eye"></i> Voir plus
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Toliara</strong></td>
+                            <td>Atsimo Andrefana</td>
+                            <td>3 800</td>
+                            <td>
+                                <span class="badge badge-besoin">7 besoins</span>
+                                <br><small>Eau, Riz, Tôles</small>
+                            </td>
+                            <td>
+                                <span class="badge badge-don">4 dons</span>
+                                <br><small>Eau: 500L</small>
+                            </td>
+                            <td><span class="badge badge-warning">Partiel</span></td>
+                            <td>
+                                <button class="view-details-btn" onclick="viewVilleDetails('Toliara')">
+                                    <i class="fas fa-eye"></i> Voir plus
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Antsiranana</strong></td>
+                            <td>Diana</td>
+                            <td>2 500</td>
+                            <td>
+                                <span class="badge badge-besoin">6 besoins</span>
+                                <br><small>Médicaments, Riz</small>
+                            </td>
+                            <td>
+                                <span class="badge badge-don">1 don</span>
+                                <br><small>Médicaments</small>
+                            </td>
+                            <td><span class="badge badge-warning">Important</span></td>
+                            <td>
+                                <button class="view-details-btn" onclick="viewVilleDetails('Antsiranana')">
+                                    <i class="fas fa-eye"></i> Voir plus
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Inclusion du footer -->
+<script>
+    fetch('includes/footer.html')
+        .then(response => response.text())
+        .then(data => {
+            document.body.insertAdjacentHTML('beforeend', data);
+        });
+</script>

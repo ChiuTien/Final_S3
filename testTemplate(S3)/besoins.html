@@ -1,0 +1,192 @@
+<!-- Inclusion du header -->
+<script>
+    fetch('includes/header.html')
+        .then(response => response.text())
+        .then(data => {
+            document.body.insertAdjacentHTML('afterbegin', data);
+            
+            // Marquer le lien actif
+            setTimeout(() => {
+                document.querySelectorAll('.navbar-menu a').forEach(link => {
+                    link.classList.remove('active');
+                    if(link.getAttribute('href') === 'besoins.html') {
+                        link.classList.add('active');
+                    }
+                });
+            }, 100);
+        });
+</script>
+
+<div class="container">
+    <div class="page-title">
+        <h2>
+            <i class="fas fa-list"></i>
+            Liste des besoins
+        </h2>
+        <p>Consultez et filtrez les besoins par ville</p>
+    </div>
+
+    <!-- Filtres -->
+    <div class="filter-section">
+        <div class="filter-group">
+            <label for="filterVille"><i class="fas fa-filter"></i> Filtrer par ville</label>
+            <select class="filter-select" id="filterVille" onchange="filterBesoinsByVille()">
+                <option value="">Toutes les villes</option>
+                <option value="Antananarivo">Antananarivo</option>
+                <option value="Toamasina">Toamasina</option>
+                <option value="Mahajanga">Mahajanga</option>
+                <option value="Fianarantsoa">Fianarantsoa</option>
+                <option value="Toliara">Toliara</option>
+                <option value="Antsiranana">Antsiranana</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="filterType">Filtrer par type</label>
+            <select class="filter-select" id="filterType">
+                <option value="">Tous les types</option>
+                <option value="nature">Nature</option>
+                <option value="materiaux">Matériaux</option>
+                <option value="argent">Argent</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="filterUrgence">Filtrer par urgence</label>
+            <select class="filter-select" id="filterUrgence">
+                <option value="">Tous</option>
+                <option value="urgent">Urgent</option>
+                <option value="important">Important</option>
+                <option value="normal">Normal</option>
+            </select>
+        </div>
+        <button class="btn btn-primary">
+            <i class="fas fa-search"></i> Appliquer les filtres
+        </button>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="stats-container">
+        <div class="stat-item">
+            <i class="fas fa-list"></i>
+            <div class="stat-number">47</div>
+            <div class="stat-label">Besoins totaux</div>
+        </div>
+        <div class="stat-item" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);">
+            <i class="fas fa-exclamation-circle"></i>
+            <div class="stat-number">15</div>
+            <div class="stat-label">Besoins urgents</div>
+        </div>
+        <div class="stat-item" style="background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);">
+            <i class="fas fa-clock"></i>
+            <div class="stat-number">20</div>
+            <div class="stat-label">En attente</div>
+        </div>
+        <div class="stat-item" style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%);">
+            <i class="fas fa-check-circle"></i>
+            <div class="stat-number">12</div>
+            <div class="stat-label">Satisfaits</div>
+        </div>
+    </div>
+
+    <!-- Liste des besoins -->
+    <div class="card">
+        <div class="card-header">
+            <h5>Tous les besoins</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ville</th>
+                            <th>Type</th>
+                            <th>Produit</th>
+                            <th>Quantité</th>
+                            <th>Prix unitaire</th>
+                            <th>Total (Ar)</th>
+                            <th>Urgence</th>
+                            <th>Date</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Antananarivo</strong></td>
+                            <td><span class="badge" style="background-color: #3498db; color: white;">Nature</span></td>
+                            <td>Riz</td>
+                            <td>500 kg</td>
+                            <td>2 000 Ar</td>
+                            <td>1 000 000 Ar</td>
+                            <td><span class="badge badge-warning">Important</span></td>
+                            <td>16/02/2026</td>
+                            <td><span class="badge badge-warning">Partiel</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Antananarivo</strong></td>
+                            <td><span class="badge" style="background-color: #3498db; color: white;">Nature</span></td>
+                            <td>Huile</td>
+                            <td>200 L</td>
+                            <td>5 000 Ar</td>
+                            <td>1 000 000 Ar</td>
+                            <td><span class="badge badge-warning">Important</span></td>
+                            <td>16/02/2026</td>
+                            <td><span class="badge badge-warning">Partiel</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Mahajanga</strong></td>
+                            <td><span class="badge" style="background-color: #6c757d; color: white;">Matériaux</span></td>
+                            <td>Tôles</td>
+                            <td>100 pièces</td>
+                            <td>25 000 Ar</td>
+                            <td>2 500 000 Ar</td>
+                            <td><span class="badge badge-danger">Urgent</span></td>
+                            <td>16/02/2026</td>
+                            <td><span class="badge badge-danger">Non couvert</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Mahajanga</strong></td>
+                            <td><span class="badge" style="background-color: #27ae60; color: white;">Argent</span></td>
+                            <td>Don financier</td>
+                            <td>200 000 Ar</td>
+                            <td>-</td>
+                            <td>200 000 Ar</td>
+                            <td><span class="badge badge-danger">Urgent</span></td>
+                            <td>16/02/2026</td>
+                            <td><span class="badge badge-danger">Non couvert</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Toamasina</strong></td>
+                            <td><span class="badge" style="background-color: #3498db; color: white;">Nature</span></td>
+                            <td>Riz</td>
+                            <td>300 kg</td>
+                            <td>2 000 Ar</td>
+                            <td>600 000 Ar</td>
+                            <td><span class="badge badge-success">Normal</span></td>
+                            <td>15/02/2026</td>
+                            <td><span class="badge badge-success">Couvert</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Fianarantsoa</strong></td>
+                            <td><span class="badge" style="background-color: #3498db; color: white;">Nature</span></td>
+                            <td>Riz</td>
+                            <td>500 kg</td>
+                            <td>2 000 Ar</td>
+                            <td>1 000 000 Ar</td>
+                            <td><span class="badge badge-danger">Urgent</span></td>
+                            <td>15/02/2026</td>
+                            <td><span class="badge badge-danger">Non couvert</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Inclusion du footer -->
+<script>
+    fetch('includes/footer.html')
+        .then(response => response.text())
+        .then(data => {
+            document.body.insertAdjacentHTML('beforeend', data);
+        });
+</script>
