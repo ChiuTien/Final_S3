@@ -20,7 +20,7 @@ class RepDonnation{
             $stmt = $this->db->prepare($sql);
             $stmt->bindValue(':idDon', $idDon, PDO::PARAM_INT);
             $stmt->bindValue(':idProduit', $idProduit, PDO::PARAM_INT);
-            $stmt->bindValue(':quantiteProduit', $quantiteProduit, PDO::PARAM_INT);
+            $stmt->bindValue(':quantiteProduit', $quantiteProduit, PDO::PARAM_STR);
             $stmt->execute();
         } catch (\Throwable $th) {
             throw $th;

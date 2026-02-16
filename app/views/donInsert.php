@@ -39,14 +39,6 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="totalPrix">
-                                <i class="fas fa-coins"></i> Valeur totale (Ar)
-                            </label>
-                            <input type="number" class="form-control" id="totalPrix" name="totalPrix" 
-                                   placeholder="Ex: 500000" min="0" step="0.01" required>
-                        </div>
-
-                        <div class="form-group">
                             <label class="form-label">
                                 <i class="fas fa-box"></i> Produits à donner
                             </label>
@@ -69,13 +61,13 @@
                                     </select>
                                     <input type="number" class="form-control" name="produits[0][quantite]" 
                                            placeholder="Quantité" min="0.01" step="0.01" required style="flex: 1;">
-                                    <button type="button" class="btn btn-danger" onclick="removeProduit(this)" 
+                                    <button type="button" class="btn btn-danger btn-remove-produit" 
                                             style="display: none;">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
                             </div>
-                            <button type="button" class="btn btn-secondary" onclick="addProduit()" 
+                            <button type="button" class="btn btn-secondary" id="btnAddProduit" 
                                     style="margin-top: 10px;">
                                 <i class="fas fa-plus"></i> Ajouter un produit
                             </button>
@@ -104,10 +96,10 @@
                     <h6><i class="fas fa-check"></i> Comment ajouter un don ?</h6>
                     <ol style="padding-left: 20px; line-height: 1.8;">
                         <li>Sélectionnez la date du don</li>
-                        <li>Entrez la valeur totale en Ariary</li>
                         <li>Sélectionnez les produits donnés</li>
                         <li>Indiquez les quantités</li>
                         <li>Cliquez sur "Enregistrer"</li>
+                        <li>Le prix sera calculé automatiquement</li>
                     </ol>
 
                     <hr style="margin: 15px 0;">
@@ -115,7 +107,7 @@
                     <h6><i class="fas fa-lightbulb"></i> Astuces</h6>
                     <ul style="padding-left: 20px; line-height: 1.8;">
                         <li>Vous pouvez ajouter plusieurs produits</li>
-                        <li>La valeur totale doit correspondre à la somme des produits</li>
+                        <li>Le prix total est calculé via les équivalences</li>
                         <li>Les quantités acceptent les décimales</li>
                     </ul>
                 </div>
@@ -153,81 +145,95 @@
     </div>
 </div>
 
-<script>
-let produitIndex = 1;
-
-function addProduit() {
-    const container = document.getElementById('produits-container');
-    const firstItem = container.querySelector('.produit-item');
-    const newItem = firstItem.cloneNode(true);
-    
-    // Mettre à jour les indices
-    const select = newItem.querySelector('select');
-    const input = newItem.querySelector('input');
-    const button = newItem.querySelector('button');
-    
-    select.name = `produits[${produitIndex}][idProduit]`;
-    select.value = '';
-    input.name = `produits[${produitIndex}][quantite]`;
-    input.value = '';
-    button.style.display = 'inline-block';
-    
-    container.appendChild(newItem);
-    produitIndex++;
-    
-    updateRemoveButtons();
-}
-
-function removeProduit(button) {
-    const container = document.getElementById('produits-container');
-    if (container.children.length > 1) {
-        button.closest('.produit-item').remove();
-        updateRemoveButtons();
-    }
-}
-
-function updateRemoveButtons() {
-    const container = document.getElementById('produits-container');
-    const items = container.querySelectorAll('.produit-item');
-    
-    items.forEach((item, index) => {
-        const button = item.querySelector('button');
-        if (items.length === 1) {
-            button.style.display = 'none';
-        } else {
-            button.style.display = 'inline-block';
-        }
-    });
-}
-
-// Validation du formulaire
-document.getElementById('formDon').addEventListener('submit', function(e) {
-    const totalPrix = parseFloat(document.getElementById('totalPrix').value);
-    
-    if (totalPrix <= 0) {
-        e.preventDefault();
-        alert('La valeur totale doit être supérieure à 0');
-        return false;
-    }
-    
-    const produitItems = document.querySelectorAll('.produit-item');
-    let hasValidProduit = false;
-    
-    produitItems.forEach(item => {
-        const select = item.querySelector('select');
-        const input = item.querySelector('input');
-        
-        if (select.value && parseFloat(input.value) > 0) {
-            hasValidProduit = true;
-        }
-    });
-    
-    if (!hasValidProduit) {
-        e.preventDefault();
-        alert('Veuillez ajouter au moins un produit avec une quantité valide');
-        return false;
-    }
-});
-</script>
-
 <?php include __DIR__ . '/includes/footer.php'; ?>
+
+<script nonce="<?= $_SERVER['CSP_NONCE'] ?? '' ?>">
+(function() {
+    'use strict';
+    
+    let produitIndex = 1;
+
+    function addProduit() {
+        const container = document.getElementById('produits-container');
+        const firstItem = container.querySelector('.produit-item');
+        const newItem = firstItem.cloneNode(true);
+        
+        // Mettre à jour les indices
+        const select = newItem.querySelector('select');
+        const input = newItem.querySelector('input');
+        const button = newItem.querySelector('button');
+        
+        select.name = `produits[${produitIndex}][idProduit]`;
+        select.value = '';
+        input.name = `produits[${produitIndex}][quantite]`;
+        input.value = '';
+        button.style.display = 'inline-block';
+        
+        container.appendChild(newItem);
+        produitIndex++;
+        
+        updateRemoveButtons();
+        attachRemoveHandlers();
+    }
+
+    function removeProduit(button) {
+        const container = document.getElementById('produits-container');
+        if (container.children.length > 1) {
+            button.closest('.produit-item').remove();
+            updateRemoveButtons();
+        }
+    }
+
+    function updateRemoveButtons() {
+        const container = document.getElementById('produits-container');
+        const items = container.querySelectorAll('.produit-item');
+        
+        items.forEach((item, index) => {
+            const button = item.querySelector('button');
+            if (items.length === 1) {
+                button.style.display = 'none';
+            } else {
+                button.style.display = 'inline-block';
+            }
+        });
+    }
+
+    function attachRemoveHandlers() {
+        document.querySelectorAll('.btn-remove-produit').forEach(btn => {
+            btn.removeEventListener('click', handleRemove);
+            btn.addEventListener('click', handleRemove);
+        });
+    }
+
+    function handleRemove(e) {
+        removeProduit(e.target.closest('button'));
+    }
+
+    // Event listener pour le bouton "Ajouter un produit"
+    document.getElementById('btnAddProduit').addEventListener('click', addProduit);
+
+    // Attacher les handlers pour les boutons de suppression existants
+    attachRemoveHandlers();
+
+    // Validation du formulaire
+    document.getElementById('formDon').addEventListener('submit', function(e) {
+        const produitItems = document.querySelectorAll('.produit-item');
+        let hasValidProduit = false;
+        
+        produitItems.forEach(item => {
+            const select = item.querySelector('select');
+            const input = item.querySelector('input');
+            
+            if (select.value && parseFloat(input.value) > 0) {
+                hasValidProduit = true;
+            }
+        });
+        
+        if (!hasValidProduit) {
+            e.preventDefault();
+            alert('Veuillez ajouter au moins un produit avec une quantité valide');
+            return false;
+        }
+    });
+})();
+</script>

@@ -1,5 +1,5 @@
 <?php 
-    namespace App\Models;
+    namespace app\models;
     class Donnation{
         //Attribut 
         private $idDonnation;
@@ -8,7 +8,11 @@
         private $quantiteProduit;
 
         //Constructeur
-        public function __construct(){
+        public function __construct($idDonnation = null, $idDon = null, $idProduit = null, $quantiteProduit = null){
+            $this->idDonnation = $idDonnation;
+            $this->idDon = $idDon;
+            $this->idProduit = $idProduit;
+            $this->quantiteProduit = $quantiteProduit;
         }
 
         //Getters

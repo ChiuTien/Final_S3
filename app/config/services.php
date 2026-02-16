@@ -100,3 +100,11 @@ if (Debugger::$showBar === true && php_sapi_name() !== 'cli') {
 // $app->register('redis', Redis::class, [ $config['redis']['host'], $config['redis']['port'] ]);
 
 // Add more service registrations below as needed
+
+/**********************************************
+ *           CSP Nonce Generation             *
+ **********************************************/
+// Generate a random nonce for Content Security Policy
+$cspNonce = base64_encode(random_bytes(24));
+$app->set('csp_nonce', $cspNonce);
+$_SERVER['CSP_NONCE'] = $cspNonce;

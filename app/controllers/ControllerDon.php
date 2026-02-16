@@ -1,5 +1,5 @@
 <?php 
-namespace App\Controllers;
+namespace app\controllers;
 use app\models\Don;
 use app\repository\RepDon;
 class ControllerDon {
@@ -25,11 +25,8 @@ class ControllerDon {
     public function getAllDons(): array {
         return $this->repDon->getAllDons();
     }
-    //Methodes supplementaires
-    public function getNombreDons() {
-        $dons = $this->getAllDons();
-        return count($dons);
-    }
+
+
 }
 
 ?>

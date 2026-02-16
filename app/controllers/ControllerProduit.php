@@ -1,5 +1,5 @@
 <?php
-    namespace app\Controllers;
+    namespace app\controllers;
 
     use app\repository\RepProduit;
     use app\models\Produit;
