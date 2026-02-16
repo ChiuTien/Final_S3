@@ -7,6 +7,7 @@ use app\controllers\ControllerDon;
 use app\controllers\ControllerDonnation;
 use app\controllers\ControllerVille;
 use app\controllers\ControllerBesoin;
+use app\controllers\ControllerDispatchMere;
 
 /** 
  * @var Router $router 
@@ -20,7 +21,10 @@ $router->group('', function(Router $router) use ($app) {
     $router->get('/', function() use ($app) {
 		$controllerVille = new ControllerVille();
 	    $controllerBesoin = new ControllerBesoin();
-        $app->render('welcome', ['controllerVille' => $controllerVille, 'controllerBesoin' => $controllerBesoin]);
+        $controllerDon = new ControllerDon();
+        $controllerDispatchMere = new ControllerDispatchMere();
+        $app->render('welcome', ['controllerVille' => $controllerVille, 'controllerBesoin' => $controllerBesoin,
+        'controllerDon' => $controllerDon, 'controllerDispatchMere' => $controllerDispatchMere]);
     });
 
     // Route pour l'affichage des dons

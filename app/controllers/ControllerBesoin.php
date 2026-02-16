@@ -27,6 +27,11 @@
         public function deleteBesoin($id) {
             return $this->repBesoin->supprimerBesoin($id);
         }
+    //Methodes supplémentaires
+        public function getNombreBesoin() {
+            $besoins = $this->getAllBesoin();
+            return count($besoins);
+        }
     }
 
 ?>

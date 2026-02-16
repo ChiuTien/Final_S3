@@ -9,7 +9,7 @@ class ControllerDon {
     public function __construct() {
         $this->repDon = new RepDon();
     }
-    //Methodes
+    //CRUD
     public function addDon(Don $don): int {
         return $this->repDon->addDon($don);
     }
@@ -25,8 +25,11 @@ class ControllerDon {
     public function getAllDons(): array {
         return $this->repDon->getAllDons();
     }
-
-
+    //Methodes supplementaires
+    public function getNombreDons() {
+        $dons = $this->getAllDons();
+        return count($dons);
+    }
 }
 
 ?>
