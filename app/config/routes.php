@@ -34,4 +34,9 @@ $router->group('', function(Router $router) use ($app) {
         $app->render('donsAffichage', ['dons' => $dons, 'donnations' => $donnations]);
     });
 
+    $router->get('/villes', function() use ($app) {
+        $controllerVille = new ControllerVille();
+        $app->render('villes', ['controllerVille' => $controllerVille]);
+    });
+
 }, [ SecurityHeadersMiddleware::class ]);
