@@ -1,5 +1,5 @@
 <?php 
-    namespace app\Controllers;
+    namespace app\controllers;
 
     use app\repository\RepBesoin;
     use app\models\Besoin;

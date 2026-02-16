@@ -9,7 +9,7 @@
     //Attributs
         private PDO $db;
     //Constructeur
-        public function __construct(){
+        public function __construct() {
             $this->db = Flight::db();
         }
     //Methodes

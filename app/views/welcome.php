@@ -16,8 +16,8 @@
         <div class="col-3">
             <div class="stat-card">
                 <i class="fas fa-city"></i>
-                <h3>15</h3>
-                <p>Villes sinistrées</p>
+                <h3><?= $controllerVille->getNombreVille() ?></h3>
+                <p>Villes</p>
             </div>
         </div>
         <div class="col-3">
@@ -39,106 +39,6 @@
                 <i class="fas fa-truck"></i>
                 <h3>34</h3>
                 <p>Dispachs effectués</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Villes avec besoins et dons -->
-    <div class="card">
-        <div class="card-header">
-            <h5>
-                <i class="fas fa-map-marker-alt"></i>
-                Liste des villes - Besoins et dons attribués
-            </h5>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Ville</th>
-                            <th>Région</th>
-                            <th>Besoins</th>
-                            <th>Dons attribués</th>
-                            <th>Statut</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>Antananarivo</strong></td>
-                            <td>Analamanga</td>
-                            <td>
-                                <span class="badge badge-besoin">Riz: 500kg</span>
-                                <span class="badge badge-besoin">Huile: 200L</span>
-                                <span class="badge badge-besoin">Tôles: 100</span>
-                            </td>
-                            <td>
-                                <span class="badge badge-don">Riz: 300kg</span>
-                                <span class="badge badge-don">Huile: 150L</span>
-                                <span class="badge badge-don">Argent: 500 000 Ar</span>
-                            </td>
-                            <td>
-                                <span class="badge badge-warning">Partiellement couvert</span>
-                            </td>
-                            <td>
-                                <button class="btn btn-sm btn-outline-primary" title="Voir détails">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-success" title="Dispatch">
-                                    <i class="fas fa-truck"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>Toamasina</strong></td>
-                            <td>Atsinanana</td>
-                            <td>
-                                <span class="badge badge-besoin">Riz: 300kg</span>
-                                <span class="badge badge-besoin">Clous: 50kg</span>
-                            </td>
-                            <td>
-                                <span class="badge badge-don">Riz: 300kg</span>
-                                <span class="badge badge-don">Clous: 50kg</span>
-                            </td>
-                            <td>
-                                <span class="badge badge-success">Couvert</span>
-                            </td>
-                            <td>
-                                <button class="btn btn-sm btn-outline-primary">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-success">
-                                    <i class="fas fa-truck"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>Mahajanga</strong></td>
-                            <td>Boeny</td>
-                            <td>
-                                <span class="badge badge-besoin">Riz: 400kg</span>
-                                <span class="badge badge-besoin">Huile: 100L</span>
-                                <span class="badge badge-besoin">Tôles: 50</span>
-                                <span class="badge badge-besoin">Argent: 200 000 Ar</span>
-                            </td>
-                            <td>
-                                <span class="badge badge-don">Riz: 100kg</span>
-                            </td>
-                            <td>
-                                <span class="badge badge-danger">Urgent</span>
-                            </td>
-                            <td>
-                                <button class="btn btn-sm btn-outline-primary">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-success">
-                                    <i class="fas fa-truck"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
             </div>
         </div>
     </div>
