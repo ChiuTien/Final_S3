@@ -17,6 +17,10 @@ use app\controllers\ControllerDispatchMere;
 // This wraps all routes in the group with the SecurityHeadersMiddleware
 $router->group('', function(Router $router) use ($app) {
 
+    $router->get('/villes', function() use ($app) {
+        $app->render('villes');
+    });
+
     // Route pour la page d'accueil
     $router->get('/', function() use ($app) {
 		$controllerVille = new ControllerVille();
