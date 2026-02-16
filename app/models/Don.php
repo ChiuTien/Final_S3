@@ -3,31 +3,36 @@ namespace app\models;
 
 class Don{
     private $idDon;
-    private  DateTime $dateDon;
+    private \DateTime $dateDon;
     private $totalPrix;
 
-    public function __construct($idDon, DateTime $dateDon, $totalPrix) {
+    public function __construct($idDon = null, \DateTime $dateDon = null, $totalPrix = null) {
         $this->idDon = $idDon;
-        $this->dateDon = $dateDon;
+        if ($dateDon !== null) {
+            $this->dateDon = $dateDon;
+        } else {
+            $this->dateDon = new \DateTime();
+        }
         $this->totalPrix = $totalPrix;
     }
 
-    public function getIdDon() :int {
+    public function getIdDon() :?int {
         return $this->idDon;
     }
 
-    public function getDateDon() :DateTime {
+    public function getDateDon() :\DateTime {
         return $this->dateDon;
     }
 
-    public function getTotalPrix() :float {
+    public function getTotalPrix() :?float {
         return $this->totalPrix;
     }
+    
     public function setIdDon($idDon) :void {
         $this->idDon = $idDon;
     }
 
-    public function setDateDon(DateTime $dateDon) :void {
+    public function setDateDon(\DateTime $dateDon) :void {
         $this->dateDon = $dateDon;
     }
 
