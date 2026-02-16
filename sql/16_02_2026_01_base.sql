@@ -29,6 +29,7 @@ CREATE OR REPLACE TABLE EquivalenceProduit(
     idEquivalenceProduit INT PRIMARY KEY AUTO_INCREMENT,
     idProduit INT,
     quantite DOUBLE,
+    val VARCHAR(50),
     prix DOUBLE
 );
 
