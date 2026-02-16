@@ -9,8 +9,8 @@
         private RepDonnation $repDonnation;
 
         // Constructeur
-        public function __construct(RepDonnation $repDonnation) {
-            $this->repDonnation = $repDonnation;
+        public function __construct() {
+            $this->repDonnation = new RepDonnation();
         }
 
         // Méthodes
