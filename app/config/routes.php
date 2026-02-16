@@ -15,15 +15,6 @@ use app\controllers\ControllerDonnation;
 // This wraps all routes in the group with the SecurityHeadersMiddleware
 $router->group('', function(Router $router) use ($app) {
 
-<<<<<<< HEAD
-	//Get
-	$router->get('/', function() use ($app) {
-		$app->render('accueil');
-	});
-
-	//Post
-	
-=======
     // Route pour la page d'accueil
     $router->get('/', function() use ($app) {
         $app->render('welcome');
@@ -40,5 +31,4 @@ $router->group('', function(Router $router) use ($app) {
         $app->render('donsAffichage', ['dons' => $dons, 'donnations' => $donnations]);
     });
 
->>>>>>> Christelle
 }, [ SecurityHeadersMiddleware::class ]);
