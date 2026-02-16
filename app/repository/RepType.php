@@ -1,7 +1,6 @@
 <?php
 namespace app\repository;
 
-use Flight;
 use PDO;
 
 
