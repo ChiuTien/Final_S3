@@ -51,3 +51,5 @@ CREATE OR REPLACE TABLE Donnation(
     idProduit INT,
     quantiteProduit DECIMAL(10,2)
 );
+
+
