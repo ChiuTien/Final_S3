@@ -7,15 +7,15 @@ use app\repository\RepVille;
 class ControllerVille {
     private RepVille $villeRepo;
 
-    public function __construct(RepVille $villeRepo) {
-        $this->villeRepo = $villeRepo;
+    public function __construct() {
+        $this->villeRepo = new RepVille();
     }
 
-    public function addVille(Ville $ville): void {
+    public function addVille(Ville $ville) {
         $this->villeRepo->addVille($ville);
     }
 
-    public function removeVille(Ville $ville): void {
+    public function removeVille(Ville $ville) {
         return $this->villeRepo->removeVille($ville);
     }
 
@@ -33,6 +33,13 @@ class ControllerVille {
 
     public function updateVille(Ville $ville) {
         return $this->villeRepo->updateVille($ville);
+    }
+
+    //Methodes supplementaires
+    public static function getNombreVille() {
+        $villeRepo = new RepVille();
+        $villes = $villeRepo->getAllVilles();
+        return count($villes);
     }
 }
 ?>
