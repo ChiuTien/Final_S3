@@ -1,5 +1,6 @@
 <?php 
-namespace App\Models;
+namespace app\models;
+
 class Don{
     private $idDon;
     private  DateTime $dateDon;
