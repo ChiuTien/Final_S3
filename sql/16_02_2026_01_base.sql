@@ -31,3 +31,9 @@ CREATE OR REPLACE TABLE Ville(
     idRegion INT,
     valVille VARCHAR(100)
 );
+
+CREATE OR REPLACE TABLE Produit(
+    idProduit INT PRIMARY KEY AUTO_INCREMENT,
+    valProduit VARCHAR(100),
+    idType INT
+);
