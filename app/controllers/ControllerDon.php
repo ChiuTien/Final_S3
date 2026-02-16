@@ -6,8 +6,8 @@ class ControllerDon {
     //Attribut
     private RepDon $repDon;
     //Constructeur
-    public function __construct(RepDon $repDon) {
-        $this->repDon = $repDon;
+    public function __construct() {
+        $this->repDon = new RepDon();
     }
     //Methodes
     public function addDon(Don $don): void {
@@ -25,7 +25,7 @@ class ControllerDon {
     public function getAllDons(): array {
         return $this->repDon->getAllDons();
     }
-    
+
 
 }
 
