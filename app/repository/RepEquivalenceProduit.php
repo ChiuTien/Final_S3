@@ -103,4 +103,24 @@ class RepEquivalenceProduit
 
         return $equivalence;
     }
+
+    public function getSumPriceByIdProduit(int $idProduit): float
+    {
+        $totalPrice = 0.0;
+
+        try {
+            $sql = "SELECT SUM(prix) AS totalPrice FROM EquivalenceProduit WHERE idProduit = :idProduit";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':idProduit', $idProduit, PDO::PARAM_INT);
+            $stmt->execute();
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($row && isset($row['totalPrice'])) {
+                $totalPrice = (float)$row['totalPrice'];
+            }
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+
+        return $totalPrice;
+    }
 }

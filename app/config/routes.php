@@ -1,5 +1,7 @@
 <?php
 
+use app\controllers\ControllerEquivalenceDate;
+use app\Controllers\ControllerEquivalenceProduit;
 use app\middlewares\SecurityHeadersMiddleware;
 use flight\Engine;
 use flight\net\Router;
@@ -37,7 +39,20 @@ $router->group('', function(Router $router) use ($app) {
 
     // Route pour afficher la liste des dispatch mère
     $router->get('/dispatch', function() use ($app) {
-        $app->render('dispatch');
+
+        $controllerVille = new ControllerVille();
+        $controllerEquivalence = new ControllerEquivalenceDate();
+        $controllerDonnation = new ControllerDonnation();
+        $controllerEquivalenceProduit = new ControllerEquivalenceProduit();
+
+        $villes = $controllerVille->getAllVilles();
+        
+
+        $app->render('dispatch', [
+            'controllerEquivalence' => $controllerEquivalence,
+            'controllerDonnation' => $controllerDonnation,
+            'controllerEquivalenceProduit' => $controllerEquivalenceProduit
+        ]);
     });
 
     // Route pour afficher les détails d'une dispatch mère et ses filles

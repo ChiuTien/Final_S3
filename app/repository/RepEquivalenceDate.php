@@ -95,4 +95,28 @@ class RepEquivalenceDate
 
         return $equivalence;
     }
+
+    public function getEquivalenceDateByIdBesoin(int $idBesoin): array
+    {
+        $equivalences = [];
+
+        try {
+            $sql = "SELECT * FROM Equivalence_date WHERE id_besoin = :id_besoin";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':id_besoin', $idBesoin, PDO::PARAM_INT);
+            $stmt->execute();
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $equivalence = new EquivalenceDate();
+                $equivalence->setIdEquivalence($row['idEquivalence']);
+                $equivalence->setIdBesoin($row['id_besoin']);
+                $equivalence->setDateEquivalence($row['date_equivalence']);
+                $equivalences[] = $equivalence;
+            }
+            $stmt->closeCursor();
+
+            return $equivalences;
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
 }
