@@ -92,4 +92,17 @@ class RepDonnation{
         }
         return $donnations;
     }
+
+    public function getQuantiteProduitByIdProduit(int $idProduit): int {
+        try {
+            $sql = "SELECT SUM(quantiteProduit) AS totalQuantite FROM Donnation WHERE idProduit = :idProduit";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':idProduit', $idProduit, PDO::PARAM_INT);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return (int)$result['totalQuantite'];
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
 }

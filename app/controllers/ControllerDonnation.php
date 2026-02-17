@@ -33,6 +33,10 @@
         public function getAllDonnation(): array {
             return $this->repDonnation->getAllDonnation();
         }
+
+        public function getQuantiteProduitByIdProduit(int $idProduit): int {
+            return $this->repDonnation->getQuantiteProduitByIdProduit($idProduit);
+        }
     }
 
 
