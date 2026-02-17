@@ -44,11 +44,14 @@ $router->group('', function(Router $router) use ($app) {
         $controllerEquivalence = new ControllerEquivalenceDate();
         $controllerDonnation = new ControllerDonnation();
         $controllerEquivalenceProduit = new ControllerEquivalenceProduit();
+        $controllerDispatchMere = new ControllerDispatchMere();
 
         $villes = $controllerVille->getAllVilles();
+        $dispatchMeres = $controllerDispatchMere->getAllDispatchMeres();
         
-
         $app->render('dispatch', [
+            'villes' => $villes,
+            'dispatchMeres' => $dispatchMeres,
             'controllerEquivalence' => $controllerEquivalence,
             'controllerDonnation' => $controllerDonnation,
             'controllerEquivalenceProduit' => $controllerEquivalenceProduit
