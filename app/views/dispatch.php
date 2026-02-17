@@ -26,11 +26,11 @@ include __DIR__ . '/includes/header.php';
                             <?php foreach ($dispatchMeres as $mere): ?>
                                 <?php 
                                     $villeData = $controllerVille->getVilleById(isset($mere['id_ville']) ? $mere['id_ville'] : null);
-                                    $villeName = is_object($villeData) ? $villeData->getValVille() : (isset($villeData['val_ville']) ? $villeData['val_ville'] : 'Non définie');
+                                    $villeName = is_object($villeData) ? ($villeData->getValVille() ?? 'Non définie') : (isset($villeData['val_ville']) ? ($villeData['val_ville'] ?? 'Non définie') : 'Non définie');
                                 ?>
                                 <tr style="cursor: pointer;" onclick="window.location.href = '<?= BASE_URL ?>/dispatchDetail?id=<?= isset($mere['id_Dispatch_mere']) ? htmlspecialchars($mere['id_Dispatch_mere']) : '' ?>'">
                                     <td><?= isset($mere['id_Dispatch_mere']) ? htmlspecialchars($mere['id_Dispatch_mere']) : '' ?></td>
-                                    <td><?= htmlspecialchars($villeName) ?></td>
+                                    <td><?= htmlspecialchars($villeName ?? 'N/A') ?></td>
                                     <td><?= isset($mere['date_dispatch']) ? htmlspecialchars($mere['date_dispatch']) : '' ?></td>
                                     <td>
                                         <a href="<?= BASE_URL ?>/dispatchDetail?id=<?= isset($mere['id_Dispatch_mere']) ? htmlspecialchars($mere['id_Dispatch_mere']) : '' ?>" class="btn btn-sm btn-info">
@@ -58,9 +58,9 @@ include __DIR__ . '/includes/header.php';
             <div class="card-body">
                 <!-- Boutons de tri/filtrage -->
                 <div style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
-                    <button class="btn btn-primary" style="flex: 1; min-width: 200px;">
+                    <a href="<?= BASE_URL ?>/dispatchDate" class="btn btn-primary" style="flex: 1; min-width: 200px;">
                         <i class="fas fa-calendar-alt"></i> Par date
-                    </button>
+                    </a>
                     <button class="btn btn-info" style="flex: 1; min-width: 200px;">
                         <i class="fas fa-chart-bar"></i> Par demande minimum
                     </button>

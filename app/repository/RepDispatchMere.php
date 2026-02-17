@@ -14,12 +14,16 @@ class RepDispatchMere
         $this->db = Flight::db();
     }
 
-    public function addDispatchMere($dispatch): void {
+    public function addDispatchMere($dispatch): int {
         $sql = "INSERT INTO Dispatch_mere (id_ville, date_dispatch) VALUES (:id_ville, :date_dispatch)";
         $stmt = $this->db->prepare($sql);
         $stmt->bindValue(':id_ville', $dispatch->getIdVille(), PDO::PARAM_INT);
         $stmt->bindValue(':date_dispatch', $dispatch->getDateDispatch(), PDO::PARAM_STR);
         $stmt->execute();
+        
+        $id = (int) $this->db->lastInsertId();
+        $dispatch->setIdDispatchMere($id);
+        return $id;
     }
 
     public function removeDispatchMere($dispatch): void {

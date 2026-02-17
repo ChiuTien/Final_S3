@@ -7,6 +7,7 @@
         private $valBesoin;
         private $idVille;
         private $idType;
+        private $dateBesoin;
     //Constructeur
         public function __construct() {}
     //Setters
@@ -22,6 +23,9 @@
         public function setValBesoin($val) {
             $this->valBesoin = $val;
         }
+        public function setDateBesoin($date) {
+            $this->dateBesoin = $date;
+        }
     //Getters
         public function getIdBesoin() {
             return $this->idBesoin;
@@ -34,6 +38,9 @@
         }
         public function getValBesoin() {
             return $this->valBesoin;
+        }
+        public function getDateBesoin() {
+            return $this->dateBesoin;
         }
     }
 ?>
