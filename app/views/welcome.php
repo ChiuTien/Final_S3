@@ -70,6 +70,39 @@ foreach ($types as $type) {
         </div>
     </div>
 
+    <!-- V2 Section: Achats -->
+    <div class="row" style="margin-top: 30px; margin-bottom: 30px;">
+        <div class="col-12">
+            <div class="card border-success">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-shopping-cart"></i> Gestion des Achats (V2)
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-3">Système d'achat de produits pour satisfaire les besoins</p>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <a href="<?= BASE_URL ?>/achat" class="btn btn-success btn-block" style="width: 100%; margin-bottom: 10px;">
+                                <i class="fas fa-plus-circle"></i> Nouveau Achat
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="<?= BASE_URL ?>/simulation" class="btn btn-info btn-block" style="width: 100%; margin-bottom: 10px;">
+                                <i class="fas fa-play"></i> Simulation
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="<?= BASE_URL ?>/recapitulation" class="btn btn-primary btn-block" style="width: 100%; margin-bottom: 10px;">
+                                <i class="fas fa-chart-pie"></i> Récapitulation
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row" style="margin-top: 30px;">
         <div class="col-6">
             <div class="card">

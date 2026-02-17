@@ -35,7 +35,7 @@ if (!$idVille) {
                 <i class="fas fa-city"></i>
                 Détails de la ville: 
                 <?php if (is_object($ville)) {
-                    echo htmlspecialchars($ville->getVal());
+                    echo htmlspecialchars($ville->getValVille());
                 } elseif (is_array($ville)) {
                     echo htmlspecialchars($ville['val'] ?? '');
                 } else {
