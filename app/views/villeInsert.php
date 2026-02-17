@@ -123,12 +123,15 @@
                                     <td><?= htmlspecialchars(is_object($ville) ? $ville->getValVille() : (isset($ville['valVille']) ? $ville['valVille'] : '')) ?></td>
                                     <td><?= htmlspecialchars(is_object($ville) ? $ville->getIdRegion() : (isset($ville['idRegion']) ? $ville['idRegion'] : '')) ?></td>
                                     <td>
-                                        <button class="btn btn-sm btn-outline-primary">
-                                            <i class="fas fa-edit"></i> Modifier
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-danger">
-                                            <i class="fas fa-trash"></i> Supprimer
-                                        </button>
+                                        <form action="<?= BASE_URL ?>/villeDelete" method="get">
+                                            <input type="hidden" name="idVille" value="<?= htmlspecialchars(is_object($ville) ? $ville->getIdVille() : (isset($ville['idVille']) ? $ville['idVille'] : '')) ?>">
+                                            <button class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-edit"></i> Modifier
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" type="submit">
+                                                <i class="fas fa-trash" ></i> Supprimer
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

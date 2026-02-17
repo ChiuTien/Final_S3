@@ -670,4 +670,22 @@ $router->group('', function(Router $router) use ($app) {
         ]);
     });
 
+    $router->get('/villeDelete', function() use ($app) {
+        $idVille = $_GET['idVille'] ?? null;
+        
+        if (!$idVille) {
+            $app->redirect('/villes');
+            return;
+        }
+        
+        $controllerVille = new ControllerVille();
+        $ville = $controllerVille->getVilleById($idVille);
+        
+        if ($ville) {
+            $controllerVille->removeVille($ville);
+        }
+        
+        $app->redirect('/villes');
+    });
+
 }, [ SecurityHeadersMiddleware::class ]);
