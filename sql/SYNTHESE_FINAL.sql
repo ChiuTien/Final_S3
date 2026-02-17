@@ -57,7 +57,7 @@ CREATE  TABLE Donnation(
     quantiteProduit DECIMAL(10,2)
 );
 
-CREATE  TABLE type(
+CREATE  TABLE Type(
     idType INT PRIMARY KEY AUTO_INCREMENT,
     valType VARCHAR(100)
 );
