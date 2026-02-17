@@ -6,6 +6,19 @@ include __DIR__ . '/includes/header.php';
 ?>
 
 <div class="container">
+    <!-- Messages de succès/erreur -->
+    <?php if (isset($_GET['success'])): ?>
+        <div style="background: #d4edda; color: #155724; padding: 15px; border-radius: 5px; margin-bottom: 20px; border-left: 4px solid #28a745;">
+            <i class="fas fa-check-circle"></i> Besoin et produit enregistrés avec succès !
+        </div>
+    <?php endif; ?>
+
+    <?php if (isset($_GET['error'])): ?>
+        <div style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; margin-bottom: 20px; border-left: 4px solid #dc3545;">
+            <i class="fas fa-exclamation-circle"></i> Erreur : <?= htmlspecialchars($_GET['error']) ?>
+        </div>
+    <?php endif; ?>
+    
     <!-- Page Title -->
     <div class="page-title">
         <h2>
@@ -20,28 +33,28 @@ include __DIR__ . '/includes/header.php';
         <div class="col-3">
             <a class="stat-card" href="<?= BASE_URL ?>/villes">
                 <i class="fas fa-city"></i>
-                <h3><?= $controllerVille->getNombreVille() ?></h3>
+                <h3><?= htmlspecialchars((string)($nombreVilles ?? 0)) ?></h3>
                 <p>Villes</p>
             </a>
         </div>
         <div class="col-3">
             <a class="stat-card" href="<?= BASE_URL ?>/besoins" style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);">
                 <i class="fas fa-list"></i>
-                <h3><?= $controllerBesoin->getNombreBesoin() ?></h3>
+                <h3><?= htmlspecialchars((string)($nombreBesoins ?? 0)) ?></h3>
                 <p>Besoins enregistrés</p>
             </a>
         </div>
         <div class="col-3">
             <a class="stat-card" href="<?= BASE_URL ?>/donsAffichage" style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%);">
                 <i class="fas fa-gift"></i>
-                <h3><?= $controllerDon->getNombreDons() ?></h3>
+                <h3><?= htmlspecialchars((string)($nombreDons ?? 0)) ?></h3>
                 <p>Dons collectés</p>
             </a>
         </div>
         <div class="col-3">
             <a class="stat-card" href="<?= BASE_URL ?>/dispatch" style="background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);">
                 <i class="fas fa-truck"></i>
-                <h3><?= $controllerDispatchMere->getNombreDispatchMeres() ?></h3>
+                <h3><?= htmlspecialchars((string)($nombreDispatches ?? 0)) ?></h3>
                 <p>Dispachs effectués</p>
             </a>
         </div>
@@ -105,8 +118,8 @@ include __DIR__ . '/includes/header.php';
                         </div>
 
                         <div class="form-group">
-                            <label for="valBesoin"><i class="fas fa-align-left"></i> Besoin</label>
-                            <textarea class="form-control" id="valBesoin" name="valBesoin" rows="3" required></textarea>
+                            <label for="dateBesoin"><i class="fas fa-calendar"></i> Date de la demande</label>
+                            <input type="date" class="form-control" id="dateBesoin" name="dateBesoin" required>
                         </div>
 
                         <div class="form-group">
@@ -125,8 +138,39 @@ include __DIR__ . '/includes/header.php';
                             </select>
                         </div>
 
+                        <div class="form-group">
+                            <label for="valBesoin"><i class="fas fa-align-left"></i> Description du besoin</label>
+                            <textarea class="form-control" id="valBesoin" name="valBesoin" rows="2" required placeholder="Décrivez le besoin..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="idProduit"><i class="fas fa-box"></i> Produit demandé</label>
+                            <select class="form-control" id="idProduit" name="idProduit" required>
+                                <option value="">Sélectionnez un produit</option>
+                                <?php foreach ($produits as $produit): ?>
+                                    <?php
+                                        $produitId = is_object($produit) ? $produit->getIdProduit() : ($produit['idProduit'] ?? '');
+                                        $produitName = is_object($produit) ? $produit->getValProduit() : ($produit['valProduit'] ?? '');
+                                    ?>
+                                    <option value="<?= htmlspecialchars($produitId) ?>">
+                                        <?= htmlspecialchars($produitName) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="prixUnitaire"><i class="fas fa-money-bill"></i> Prix unitaire du produit</label>
+                            <input type="number" class="form-control" id="prixUnitaire" name="prixUnitaire" step="0.01" min="0" required placeholder="0.00">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="quantite"><i class="fas fa-weight"></i> Quantité demandée</label>
+                            <input type="number" class="form-control" id="quantite" name="quantite" step="0.01" min="0" required placeholder="0.00">
+                        </div>
+
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Enregistrer
+                            <i class="fas fa-save"></i> Enregistrer besoin et produit
                         </button>
                     </form>
                 </div>
@@ -158,13 +202,13 @@ include __DIR__ . '/includes/header.php';
                                             $valBesoin = is_object($besoin) ? $besoin->getValBesoin() : ($besoin['valBesoin'] ?? '');
                                             $idVille = is_object($besoin) ? $besoin->getIdVille() : ($besoin['idVille'] ?? null);
                                             $idType = is_object($besoin) ? $besoin->getIdType() : ($besoin['idType'] ?? null);
-                                            $villeName = $idVille !== null ? ($villeMap[$idVille] ?? '') : '';
-                                            $typeName = $idType !== null ? ($typeMap[$idType] ?? '') : '';
+                                            $villeName = $idVille !== null ? ($villeMap[$idVille] ?? 'N/A') : 'N/A';
+                                            $typeName = $idType !== null ? ($typeMap[$idType] ?? 'N/A') : 'N/A';
                                         ?>
                                         <tr>
                                             <td><?= htmlspecialchars($valBesoin ?: 'N/A') ?></td>
-                                            <td><?= htmlspecialchars($villeName ?: 'N/A') ?></td>
-                                            <td><?= htmlspecialchars($typeName ?: 'N/A') ?></td>
+                                            <td><?= htmlspecialchars($villeName) ?></td>
+                                            <td><?= htmlspecialchars($typeName) ?></td>
                                         </tr>
                                     <?php endforeach; ?>
                                 <?php else: ?>

@@ -46,8 +46,25 @@
                                     $idType = is_object($besoin) ? $besoin->getIdType() : ($besoin['idType'] ?? $besoin['id_type'] ?? null);
                                     $valBesoin = is_object($besoin) ? $besoin->getValBesoin() : ($besoin['valBesoin'] ?? $besoin['val_besoin'] ?? 'N/A');
 
-                                    // Utiliser la map pour le nom de la ville
-                                    $villeName = isset($villeMap[$idVille]) ? $villeMap[$idVille] : 'Ville #' . $idVille;
+                                    // DEBUG: afficher les valeurs
+                                    // echo "DEBUG - idVille: " . var_export($idVille, true) . " | Type: " . gettype($idVille) . "\n";
+
+                                    // Récupérer le nom de la ville
+                                    $villeName = 'Ville #' . ($idVille ?? 'vide');
+                                    if ($idVille) {
+                                        try {
+                                            $villeObj = $controllerVille->getVilleById($idVille);
+                                            if (is_object($villeObj)) {
+                                                $villeName = $villeObj->getValVille() ?? ('Ville #' . $idVille);
+                                            } elseif (isset($villeObj['valVille'])) {
+                                                $villeName = $villeObj['valVille'] ?? ('Ville #' . $idVille);
+                                            } elseif (isset($villeObj['val_ville'])) {
+                                                $villeName = $villeObj['val_ville'] ?? ('Ville #' . $idVille);
+                                            }
+                                        } catch (\Exception $e) {
+                                            $villeName = 'Ville #' . $idVille . ' (erreur)';
+                                        }
+                                    }
 
                                     // Récupérer les produits liés au besoin
                                     $produitsList = [];
@@ -57,17 +74,50 @@
                                         if ($pbIdBesoin == $idBesoin) {
                                             $idProduit = is_object($pb) ? $pb->getIdProduit() : ($pb['idProduit'] ?? $pb['id_produit'] ?? null);
                                             
-                                            // Utiliser la map pour le nom du produit
-                                            $produitName = isset($produitMap[$idProduit]) ? $produitMap[$idProduit] : 'Produit #' . $idProduit;
-                                            
-                                            // La quantité demandée vient de la map 
-                                            $quantiteDemandee = isset($equiproduitMap[$idProduit]) ? $equiproduitMap[$idProduit] : 0;
+                                            // Récupérer le nom du produit
+                                            $produitName = 'Produit #' . $idProduit;
+                                            try {
+                                                $prodObj = $controllerProduit->getProduitById($idProduit);
+                                                if (is_object($prodObj)) {
+                                                    $produitName = $prodObj->getValProduit() ?? ('Produit #' . $idProduit);
+                                                } elseif (isset($prodObj['valProduit'])) {
+                                                    $produitName = $prodObj['valProduit'] ?? ('Produit #' . $idProduit);
+                                                } elseif (isset($prodObj['val_produit'])) {
+                                                    $produitName = $prodObj['val_produit'] ?? ('Produit #' . $idProduit);
+                                                }
+                                            } catch (\Exception $e) {
+                                                // Garder le nom par défaut
+                                            }
+
+                                            // Récupérer la quantité en stock
+                                            $quantiteStock = 0;
+                                            try {
+                                                $quantiteStock = $controllerStockage->getQuantiteByProduitId($idProduit);
+                                            } catch (\Exception $e) {
+                                                $quantiteStock = 0;
+                                            }
+
+                                            // Récupérer la quantité demandée depuis EquivalenceProduit
+                                            $quantiteDemandee = 0;
+                                            try {
+                                                $equivalenceProduits = $controllerEquivalenceProduit->getAllEquivalenceProduit();
+                                                foreach ($equivalenceProduits as $ep) {
+                                                    $epIdProduit = is_object($ep) ? $ep->getIdProduit() : ($ep['idProduit'] ?? $ep['id_produit'] ?? null);
+                                                    if ($epIdProduit == $idProduit) {
+                                                        $quantiteDemandee = is_object($ep) ? ($ep->getQuantite() ?? 0) : ($ep['quantite'] ?? $ep['quantité'] ?? 0);
+                                                        break;
+                                                    }
+                                                }
+                                            } catch (\Exception $e) {
+                                                $quantiteDemandee = 0;
+                                            }
+
                                             $quantiteDemandeeTotal += $quantiteDemandee;
 
                                             $produitsList[] = [
                                                 'name' => $produitName,
-                                                'idProduit' => $idProduit,
-                                                'quantiteDemandee' => $quantiteDemandee
+                                                'quantite' => $quantiteStock,
+                                                'idProduit' => $idProduit
                                             ];
                                         }
                                     }
@@ -89,7 +139,7 @@
                                                     <li>
                                                         <?= htmlspecialchars($p['name']) ?>
                                                         <span style="color: #27ae60; font-weight: bold;">
-                                                            (<?= number_format($p['quantiteDemandee'], 2, ',', ' ') ?> demandée)
+                                                            (<?= number_format($p['quantite'], 2, ',', ' ') ?> disponible)
                                                         </span>
                                                     </li>
                                                 <?php endforeach; ?>
@@ -110,7 +160,7 @@
                             <?php endforeach; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="7" style="text-align: center; padding: 40px; color: #999;">
+                                <td colspan="6" style="text-align: center; padding: 40px; color: #999;">
                                     <i class="fas fa-inbox" style="font-size: 2rem; display: block; margin-bottom: 10px;"></i>
                                     Aucun besoin enregistré
                                 </td>

@@ -46,8 +46,12 @@
                                 <option value="">Sélectionnez une région</option>
                                 <?php if(isset($regions) && count($regions) > 0): ?>
                                     <?php foreach($regions as $region): ?>
-                                        <option value="<?= $region->getIdRegion() ?>">
-                                            <?= htmlspecialchars($region->getValRegion()) ?>
+                                        <?php
+                                            $idRegion = is_object($region) ? $region->getIdRegion() : ($region['idRegion'] ?? $region['id_region'] ?? null);
+                                            $valRegion = is_object($region) ? $region->getValRegion() : ($region['valRegion'] ?? $region['val_region'] ?? '');
+                                        ?>
+                                        <option value="<?= htmlspecialchars((string)$idRegion) ?>">
+                                            <?= htmlspecialchars($valRegion) ?>
                                         </option>
                                     <?php endforeach; ?>
                                 <?php else: ?>
