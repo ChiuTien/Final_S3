@@ -1,6 +1,4 @@
 <?php
-// Vue pour la gestion des Dispatch Mère
-// Toutes les données sont préparées dans routes.php
 include __DIR__ . '/includes/header.php';
 ?>
 
@@ -54,11 +52,23 @@ include __DIR__ . '/includes/header.php';
 
 </div>
 
-<<<<<<< HEAD
         <!-- Tableau dynamique demandé: ville | date (Equivalence_date) | quantité (Donnation) | prix (EquivalenceProduit) | voir plus -->
         <div class="card mt-4">
             <div class="card-header"><h5>Aperçu par Ville</h5></div>
             <div class="card-body">
+                <!-- Boutons de tri/filtrage -->
+                <div style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn btn-primary" style="flex: 1; min-width: 200px;">
+                        <i class="fas fa-calendar-alt"></i> Par date
+                    </button>
+                    <button class="btn btn-info" style="flex: 1; min-width: 200px;">
+                        <i class="fas fa-chart-bar"></i> Par demande minimum
+                    </button>
+                    <button class="btn btn-success" style="flex: 1; min-width: 200px;">
+                        <i class="fas fa-balance-scale"></i> Par proportionnalité
+                    </button>
+                </div>
+
                 <?php
                     $equivalenceDates = [];
                     if (isset($controllerEquivalence)) {
@@ -190,6 +200,3 @@ include __DIR__ . '/includes/header.php';
         
 
     <?php include __DIR__ . '/includes/footer.php'; ?>
-=======
-<?php include __DIR__ . '/includes/footer.php'; ?>
->>>>>>> 2a1663ffd39e822099852569bac0a093b60f166c
