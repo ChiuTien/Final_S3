@@ -1,15 +1,5 @@
 <?php
 include __DIR__ . '/includes/header.php';
-
-use \app\controllers\ControllerBesoin;
-use \app\controllers\ControllerVille;
-use \app\controllers\ControllerType;
-
-$ctrl = new ControllerBesoin();
-$ctrlVille = new ControllerVille();
-$ctrlType = new ControllerType();
-$besoins = $ctrl->getAllBesoin();
-
 ?>
 
 <div class="container">

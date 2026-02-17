@@ -1,19 +1,7 @@
 <?php
-use app\controllers\ControllerDispatchMere;
-use app\controllers\ControllerDispatchFille;
-use app\controllers\ControllerVille;
-use app\controllers\ControllerProduit;
-
+// Vue pour les détails d'un Dispatch
+// Toutes les données sont préparées dans routes.php
 include __DIR__ . '/includes/header.php';
-
-$controllerDispatchMere = new ControllerDispatchMere();
-$controllerDispatchFille = new ControllerDispatchFille();
-$controllerVille = new ControllerVille();
-$controllerProduit = new ControllerProduit();
-
-$mereId = $mereId ?? ($_GET['id'] ?? null);
-$mere = $mereId ? $controllerDispatchMere->getDispatchMereById($mereId) : null;
-$filles = $mereId ? $controllerDispatchFille->getFillesByMere($mereId) : [];
 
 if (!$mere) {
     echo '<div class="container"><div class="alert alert-danger mt-3">Dispatch mère non trouvée</div></div>';
