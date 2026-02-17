@@ -1,7 +1,7 @@
 <?php
 
 use app\controllers\ControllerEquivalenceDate;
-use app\Controllers\ControllerEquivalenceProduit;
+use app\controllers\ControllerEquivalenceProduit;
 use app\middlewares\SecurityHeadersMiddleware;
 use flight\Engine;
 use flight\net\Router;
@@ -48,10 +48,11 @@ $router->group('', function(Router $router) use ($app) {
 
         $villes = $controllerVille->getAllVilles();
         $dispatchMeres = $controllerDispatchMere->getAllDispatchMeres();
-        
+
         $app->render('dispatch', [
             'villes' => $villes,
             'dispatchMeres' => $dispatchMeres,
+            'controllerVille' => $controllerVille,
             'controllerEquivalence' => $controllerEquivalence,
             'controllerDonnation' => $controllerDonnation,
             'controllerEquivalenceProduit' => $controllerEquivalenceProduit
