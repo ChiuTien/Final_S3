@@ -93,12 +93,19 @@ $router->group('', function(Router $router) use ($app) {
         $controllerDonnation = new ControllerDonnation();
         $controllerEquivalenceProduit = new ControllerEquivalenceProduit();
         $controllerDispatchMere = new ControllerDispatchMere();
+        $controllerBesoin = new ControllerBesoin();
+        $controllerProduitBesoin = new ControllerProduitBesoin();
+        $controllerProduit = new ControllerProduit();
+
 
         $villes = $controllerVille->getAllVilles();
         $dispatchMeres = $controllerDispatchMere->getAllDispatchMeres();
 
         $app->render('dispatch', [
             'villes' => $villes,
+            'controllerBesoin' => $controllerBesoin,
+            'controllerProduitBesoin' => $controllerProduitBesoin,
+            'controllerProduit' => $controllerProduit,
             'dispatchMeres' => $dispatchMeres,
             'controllerVille' => $controllerVille,
             'controllerEquivalence' => $controllerEquivalence,
