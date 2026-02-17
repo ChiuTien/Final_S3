@@ -57,9 +57,12 @@
                 foreach ($rows as $row) {
                     $besoin = new Besoin();
                     $besoin->setIdBesoin($row['idBesoin']);
-                    $besoin->setValBesoin($row['valBesoin']);
-                    $besoin->setIdType($row['idType']);
-                    $besoin->setIdVille($row['idVille']);
+                    $besoin->setValBesoin($row['valBesoin'] ?? '');
+                    $besoin->setIdType($row['idType'] ?? null);
+                    // idVille est optionnel, peut ne pas exister dans la table
+                    if (isset($row['idVille'])) {
+                        $besoin->setIdVille($row['idVille']);
+                    }
                     $besoins[] = $besoin;
                 }
                 return $besoins;
