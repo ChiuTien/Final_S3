@@ -135,17 +135,45 @@ include __DIR__ . '/includes/header.php';
                                         <td><?= htmlspecialchars($dateEquivalence ?? 'N/A') ?></td>
                                         <td><?= htmlspecialchars((string)$quantiteDonnee) ?></td>
                                         <td><?= htmlspecialchars((string)$prixEquivalence) ?></td>
+                                        <?php
+                                            // Construire une liste HTML des produits liés au besoin
+                                            $lines = [];
+                                            if ($besoinTrouve) {
+                                                foreach ($produitBesoins as $pbItem) {
+                                                    $pbIdBesoin = is_object($pbItem) ? $pbItem->getIdBesoin() : ($pbItem['idBesoin'] ?? $pbItem['id_besoin'] ?? null);
+                                                    if ($pbIdBesoin == $besoinTrouve) {
+                                                        $pbIdProduit = is_object($pbItem) ? $pbItem->getIdProduit() : ($pbItem['idProduit'] ?? $pbItem['id_produit'] ?? null);
+                                                        $pName = 'Produit #' . ($pbIdProduit ?? '');
+                                                        if (isset($controllerProduit)) {
+                                                            $pObj = $controllerProduit->getProduitById($pbIdProduit);
+                                                            if ($pObj) $pName = is_object($pObj) ? $pObj->getValProduit() : ($pObj['valProduit'] ?? $pObj['val_produit'] ?? $pName);
+                                                        }
+                                                        $pQuant = 'N/A';
+                                                        if (isset($controllerDonnation)) {
+                                                            $pQuant = $controllerDonnation->getQuantiteProduitByIdProduit($pbIdProduit);
+                                                        }
+                                                        $pPrix = 'N/A';
+                                                        if (!empty($equivalenceProduits)) {
+                                                            foreach ($equivalenceProduits as $ep) {
+                                                                $epIdProduit = is_object($ep) ? $ep->getIdProduit() : ($ep['idProduit'] ?? $ep['id_produit'] ?? null);
+                                                                if ($epIdProduit == $pbIdProduit) { $pPrix = is_object($ep) ? $ep->getPrix() : ($ep['prix'] ?? $ep['price'] ?? 'N/A'); break; }
+                                                            }
+                                                        }
+                                                        $lines[] = ['name' => $pName, 'quant' => $pQuant, 'prix' => $pPrix];
+                                                    }
+                                                }
+                                            }
+                                        ?>
                                         <td>
-                                            <?php if ($produitId): ?>
-                                                <button class="btn btn-sm btn-primary" type="button" onclick="toggleDetails(<?= htmlspecialchars($villeId) ?>, <?= htmlspecialchars($produitId) ?>)">Voir plus</button>
+                                            <?php if (!empty($lines)): ?>
+                                                <ul class="mb-0">
+                                                    <?php foreach ($lines as $l): ?>
+                                                        <li><?= htmlspecialchars($l['name']) ?> — Quantité: <?= htmlspecialchars((string)$l['quant']) ?> — Prix: <?= htmlspecialchars((string)$l['prix']) ?></li>
+                                                    <?php endforeach; ?>
+                                                </ul>
                                             <?php else: ?>
                                                 <span class="text-muted">Aucun produit lié</span>
                                             <?php endif; ?>
-                                        </td>
-                                    </tr>
-                                    <tr id="details-<?= htmlspecialchars($villeId) ?>" style="display:none; background:#fafafa;">
-                                        <td colspan="5">
-                                            <div id="details-content-<?= htmlspecialchars($villeId) ?>">Chargement...</div>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -158,32 +186,6 @@ include __DIR__ . '/includes/header.php';
             </div>
         </div>
 
-        <script>
-            function toggleDetails(villeId, produitId) {
-                var row = document.getElementById('details-' + villeId);
-                var content = document.getElementById('details-content-' + villeId);
-                if (!row) return;
-                if (row.style.display === 'none' || row.style.display === '') {
-                    // remplir le contenu avec les informations du produit (nom + id + actions possibles)
-                    var produitName = 'N/A';
-                    <?php
-                        // Préparer un mapping produitId -> nom pour un rendu JS rapide
-                        $produitsMap = [];
-                        $allProduits = $controllerProduit->getAllProduit();
-                        foreach ($allProduits as $p) {
-                            $pId = is_object($p) ? $p->getIdProduit() : ($p['idProduit'] ?? $p['id_produit'] ?? null);
-                            $pName = is_object($p) ? $p->getValProduit() : ($p['valProduit'] ?? $p['val_produit'] ?? '');
-                            if ($pId !== null) {
-                                echo "if (produitId == {$pId}) produitName = '" . addslashes($pName) . "';\n";
-                            }
-                        }
-                    ?>
-                    content.innerHTML = '<strong>Produit :</strong> ' + produitName + ' (ID: ' + produitId + ')<br><small>Utilisez cet ID pour appeler les fonctions nécessaires: getDateByIdBesoin, getQuantiteProduitByIdProduit, getPrixByIdProduit.</small>';
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            }
-        </script>
+        
 
     <?php include __DIR__ . '/includes/footer.php'; ?>
