@@ -11,6 +11,7 @@ use app\controllers\ControllerType;
 use app\controllers\ControllerDispatchMere;
 use app\controllers\ControllerDispatchFille;
 use app\controllers\ControllerProduit;
+use app\controllers\ControllerStockage;
 use app\controllers\ControllerProduitBesoin;
 use app\controllers\ControllerAchat;
 use app\controllers\ControllerConfig;
@@ -113,6 +114,23 @@ $router->group('', function(Router $router) use ($app) {
         ]);
     });
 
+        $router->get('/stockage', function() use ($app) {
+            $controllerStockage = new ControllerStockage();
+            $controllerProduit = new ControllerProduit();
+
+            $stockages = $controllerStockage->getAllStockage();
+            $produits = $controllerProduit->getAllProduit();
+
+            $produitsById = [];
+            foreach ($produits as $produit) {
+                $produitsById[$produit->getIdProduit()] = $produit->getValProduit();
+            }
+
+            $app->render('stockage', [
+                'stockages' => $stockages,
+                'produitsById' => $produitsById
+            ]);
+        });
     // Route POST pour ajouter un besoin depuis villeDetail
     $router->post('/villeDetail/besoin', function() use ($app) {
         try {
