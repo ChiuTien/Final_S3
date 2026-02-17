@@ -1,12 +1,12 @@
-<?php include __DIR__ . '/includes/header.php'; ?>
+<?php include __DIR__ . '/../includes/header.php'; ?>
 
 <div class="container">
     <div class="page-title">
         <h2>
-            <i class="fas fa-plus-circle"></i>
-            Ajouter un nouveau don
+            <i class="fas fa-list"></i>
+            Ajouter un nouveau besoin
         </h2>
-        <p>Enregistrez un nouveau don dans le système</p>
+        <p>Enregistrez un nouveau besoin dans le système</p>
     </div>
 
     <?php if(isset($success)): ?>
@@ -22,25 +22,61 @@
     <?php endif; ?>
 
     <div class="row">
-        <!-- Formulaire d'ajout de don -->
+        <!-- Formulaire d'ajout de besoin -->
         <div class="col-8">
             <div class="card">
                 <div class="card-header">
-                    <h5><i class="fas fa-gift"></i> Informations du don</h5>
+                    <h5><i class="fas fa-list"></i> Informations du besoin</h5>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="<?= BASE_URL ?>/donInsert" id="formDon">
+                    <form method="POST" action="<?= BASE_URL ?>/besoinInsert" id="formBesoin">
                         <div class="form-group">
-                            <label class="form-label" for="dateDon">
-                                <i class="fas fa-calendar"></i> Date du don
+                            <label class="form-label" for="idVille">
+                                <i class="fas fa-city"></i> Ville
                             </label>
-                            <input type="date" class="form-control" id="dateDon" name="dateDon" 
-                                   value="<?= date('Y-m-d') ?>" required>
+                            <select class="form-control" id="idVille" name="idVille" required>
+                                <option value="">Sélectionnez une ville</option>
+                                <?php if(isset($villes) && count($villes) > 0): ?>
+                                    <?php foreach($villes as $ville): ?>
+                                        <option value="<?= is_object($ville) ? $ville->getIdVille() : (isset($ville['idVille']) ? $ville['idVille'] : '') ?>">
+                                            <?= htmlspecialchars(is_object($ville) ? $ville->getValVille() : (isset($ville['valVille']) ? $ville['valVille'] : '')) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <option value="1">Antananarivo</option>
+                                    <option value="2">Toamasina</option>
+                                <?php endif; ?>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="valBesoin">
+                                <i class="fas fa-align-left"></i> Description du besoin
+                            </label>
+                            <textarea class="form-control" id="valBesoin" name="valBesoin" rows="3" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="idType">
+                                <i class="fas fa-tag"></i> Type
+                            </label>
+                            <select class="form-control" id="idType" name="idType" required>
+                                <option value="">Sélectionnez un type</option>
+                                <?php if(isset($types) && count($types) > 0): ?>
+                                    <?php foreach($types as $type): ?>
+                                        <option value="<?= is_object($type) ? $type->getIdType() : (isset($type['idType']) ? $type['idType'] : '') ?>">
+                                            <?= htmlspecialchars(is_object($type) ? $type->getValType() : (isset($type['valType']) ? $type['valType'] : '')) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <option value="1">Type 1</option>
+                                <?php endif; ?>
+                            </select>
                         </div>
 
                         <div class="form-group">
                             <label class="form-label">
-                                <i class="fas fa-box"></i> Produits à donner
+                                <i class="fas fa-box"></i> Produits nécessaires
                             </label>
                             <div id="produits-container">
                                 <div class="produit-item" style="display: flex; gap: 10px; margin-bottom: 10px;">
@@ -48,15 +84,14 @@
                                         <option value="">Sélectionnez un produit</option>
                                         <?php if(isset($produits) && count($produits) > 0): ?>
                                             <?php foreach($produits as $produit): ?>
-                                                <option value="<?= $produit->getIdProduit() ?>">
-                                                    <?= htmlspecialchars($produit->getValProduit()) ?>
+                                                <option value="<?= is_object($produit) ? $produit->getIdProduit() : (isset($produit['idProduit']) ? $produit['idProduit'] : '') ?>">
+                                                    <?= htmlspecialchars(is_object($produit) ? $produit->getValProduit() : (isset($produit['valProduit']) ? $produit['valProduit'] : '')) ?>
                                                 </option>
                                             <?php endforeach; ?>
                                         <?php else: ?>
                                             <option value="1">Riz</option>
                                             <option value="2">Huile</option>
-                                            <option value="3">Tôles</option>
-                                            <option value="4">Eau</option>
+                                            <option value="3">Eau</option>
                                         <?php endif; ?>
                                     </select>
                                     <input type="number" class="form-control" name="produits[0][quantite]" 
@@ -75,9 +110,9 @@
 
                         <div class="form-actions" style="display: flex; gap: 10px; margin-top: 20px;">
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Enregistrer le don
+                                <i class="fas fa-save"></i> Enregistrer le besoin
                             </button>
-                            <a href="<?= BASE_URL ?>/donsAffichage" class="btn btn-secondary">
+                            <a href="<?= BASE_URL ?>/besoins" class="btn btn-secondary">
                                 <i class="fas fa-times"></i> Annuler
                             </a>
                         </div>
@@ -93,13 +128,12 @@
                     <h5><i class="fas fa-info-circle"></i> Instructions</h5>
                 </div>
                 <div class="card-body">
-                    <h6><i class="fas fa-check"></i> Comment ajouter un don ?</h6>
+                    <h6><i class="fas fa-check"></i> Comment ajouter un besoin ?</h6>
                     <ol style="padding-left: 20px; line-height: 1.8;">
-                        <li>Sélectionnez la date du don</li>
-                        <li>Sélectionnez les produits donnés</li>
+                        <li>Sélectionnez la ville</li>
+                        <li>Ajoutez les produits nécessaires</li>
                         <li>Indiquez les quantités</li>
                         <li>Cliquez sur "Enregistrer"</li>
-                        <li>Le prix sera calculé automatiquement</li>
                     </ol>
 
                     <hr style="margin: 15px 0;">
@@ -107,45 +141,60 @@
                     <h6><i class="fas fa-lightbulb"></i> Astuces</h6>
                     <ul style="padding-left: 20px; line-height: 1.8;">
                         <li>Vous pouvez ajouter plusieurs produits</li>
-                        <li>Le prix total est calculé via les équivalences</li>
                         <li>Les quantités acceptent les décimales</li>
+                        <li>Un besoin aide à tracker les nécessités</li>
                     </ul>
-                </div>
-            </div>
-
-            <div class="card" style="margin-top: 20px;">
-                <div class="card-body" style="text-align: center;">
-                    <i class="fas fa-heart" style="font-size: 3rem; color: #e74c3c; margin-bottom: 10px;"></i>
-                    <h5>Merci pour votre générosité !</h5>
-                    <p style="color: var(--gray); margin: 0;">Chaque don compte et aide les personnes dans le besoin.</p>
-                </div>
-            </div>
-
-            <div class="card" style="margin-top: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-                <div class="card-body">
-                    <h6 style="color: white; margin-bottom: 15px;">
-                        <i class="fas fa-info-circle"></i> Processus d'insertion
-                    </h6>
-                    <div style="font-size: 0.9rem; line-height: 1.8;">
-                        <p style="margin: 0 0 10px 0;"><strong>1 Don = Plusieurs Produits</strong></p>
-                        <p style="margin: 0; opacity: 0.9;">
-                            Quand vous enregistrez un don, le système crée automatiquement :
-                        </p>
-                        <ul style="margin: 10px 0; padding-left: 20px; opacity: 0.9;">
-                            <li>1 entrée dans la table <strong>Don</strong></li>
-                            <li>N entrées dans <strong>Donnation</strong> (1 par produit)</li>
-                        </ul>
-                        <p style="margin: 10px 0 0 0; opacity: 0.9; font-size: 0.85rem;">
-                            <i class="fas fa-link"></i> Chaque donnation est liée au don via l'ID
-                        </p>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Liste des besoins existants -->
+    <div class="card" style="margin-top: 30px;">
+        <div class="card-header">
+            <h5><i class="fas fa-list"></i> Besoins enregistrés</h5>
+        </div>
+        <div class="card-body">
+            <?php if(isset($besoins) && count($besoins) > 0): ?>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Ville</th>
+                                <th>Description</th>
+                                <th>Type</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach($besoins as $besoin): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars(is_object($besoin) ? $besoin->getIdBesoin() : (isset($besoin['idBesoin']) ? $besoin['idBesoin'] : '')) ?></td>
+                                    <td><?= htmlspecialchars(is_object($besoin) ? $besoin->getIdVille() : (isset($besoin['idVille']) ? $besoin['idVille'] : '')) ?></td>
+                                    <td><?= htmlspecialchars(is_object($besoin) ? $besoin->getValBesoin() : (isset($besoin['valBesoin']) ? $besoin['valBesoin'] : '')) ?></td>
+                                    <td><?= htmlspecialchars(is_object($besoin) ? $besoin->getIdType() : (isset($besoin['idType']) ? $besoin['idType'] : '')) ?></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-edit"></i> Modifier
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-trash"></i> Supprimer
+                                        </button>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php else: ?>
+                <p style="text-align: center; color: var(--gray);">Aucun besoin enregistré</p>
+            <?php endif; ?>
+        </div>
+    </div>
 </div>
 
-<?php include __DIR__ . '/includes/footer.php'; ?>
+<?php include __DIR__ . '/../includes/footer.php'; ?>
 
 <script nonce="<?= $_SERVER['CSP_NONCE'] ?? '' ?>">
 (function() {
@@ -158,7 +207,6 @@
         const firstItem = container.querySelector('.produit-item');
         const newItem = firstItem.cloneNode(true);
         
-        // Mettre à jour les indices
         const select = newItem.querySelector('select');
         const input = newItem.querySelector('input');
         const button = newItem.querySelector('button');
@@ -209,14 +257,10 @@
         removeProduit(e.target.closest('button'));
     }
 
-    // Event listener pour le bouton "Ajouter un produit"
     document.getElementById('btnAddProduit').addEventListener('click', addProduit);
-
-    // Attacher les handlers pour les boutons de suppression existants
     attachRemoveHandlers();
 
-    // Validation du formulaire
-    document.getElementById('formDon').addEventListener('submit', function(e) {
+    document.getElementById('formBesoin').addEventListener('submit', function(e) {
         const produitItems = document.querySelectorAll('.produit-item');
         let hasValidProduit = false;
         

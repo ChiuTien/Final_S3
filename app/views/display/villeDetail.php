@@ -16,7 +16,7 @@ if (!$idVille) {
 }
 ?>
 
-<?php include 'includes/header.php'; ?>
+<?php include __DIR__ . '/../includes/header.php'; ?>
 
 <div class="container-fluid mt-5">
     <div class="row mb-4">
@@ -353,4 +353,4 @@ function removeProduitLine(btn) {
 }
 </script>
 
-<?php include 'includes/footer.php'; ?>
+<?php include __DIR__ . '/../includes/footer.php'; ?>

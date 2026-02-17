@@ -107,8 +107,8 @@ include __DIR__ . '/includes/header.php';
                                 <option value="">Sélectionnez une ville</option>
                                 <?php foreach ($villes as $ville): ?>
                                     <?php
-                                        $villeId = is_object($ville) ? $ville->getIdVille() : ($ville['idVille'] ?? '');
-                                        $villeName = is_object($ville) ? $ville->getValVille() : ($ville['valVille'] ?? '');
+                                        $villeId = "test"; //is_object($ville) ? $ville->getIdVille() : ($ville['idVille'] ?? '');
+                                        $villeName = "test"; //is_object($ville) ? $ville->getValVille() : ($ville['valVille'] ?? '');
                                     ?>
                                     <option value="<?= htmlspecialchars($villeId) ?>">
                                         <?= htmlspecialchars($villeName) ?>
