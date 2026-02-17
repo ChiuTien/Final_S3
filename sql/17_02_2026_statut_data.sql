@@ -2,12 +2,12 @@
 USE BNGRC;
 
 -- Création des tables
-CREATE OR REPLACE TABLE StatutBesoin(
+CREATE  TABLE StatutBesoin(
     IdStatutBesoin INT PRIMARY KEY AUTO_INCREMENT,
     ValStatutBesoin VARCHAR(100) NOT NULL
 );
 
-CREATE OR REPLACE TABLE Statut(
+CREATE  TABLE Statut(
     IdStatut INT PRIMARY KEY AUTO_INCREMENT,
     IdBesoin INT,
     IdStatutBesoin INT,
