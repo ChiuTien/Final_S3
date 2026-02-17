@@ -2,8 +2,12 @@
 include __DIR__ . '/includes/header.php';
 
 use \app\controllers\ControllerBesoin;
+use \app\controllers\ControllerVille;
+use \app\controllers\ControllerType;
 
 $ctrl = new ControllerBesoin();
+$ctrlVille = new ControllerVille();
+$ctrlType = new ControllerType();
 $besoins = $ctrl->getAllBesoin();
 
 ?>
@@ -21,18 +25,37 @@ $besoins = $ctrl->getAllBesoin();
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Besoins</th>
+                            <th>Besoin</th>
+                            <th>Ville</th>
+                            <th>Type</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($besoins as $b): ?>
-                            <?php if (is_array($b)): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($b['valBesoin'] ?? 'N/A') ?></td>
-                                </tr>
-                            <?php else: ?>
-                                <tr><td colspan="9">Données non disponibles</td></tr>
-                            <?php endif; ?>
+                            <?php
+                                if (!is_object($b) && !is_array($b)) {
+                                    continue;
+                                }
+
+                                $valBesoin = is_object($b) ? $b->getValBesoin() : ($b['valBesoin'] ?? '');
+                                $idVille = is_object($b) ? $b->getIdVille() : ($b['idVille'] ?? null);
+                                $idType = is_object($b) ? $b->getIdType() : ($b['idType'] ?? null);
+
+                                $villeData = $idVille ? $ctrlVille->getVilleById($idVille) : null;
+                                $villeName = is_object($villeData)
+                                    ? $villeData->getValVille()
+                                    : (is_array($villeData) ? ($villeData['valVille'] ?? '') : '');
+
+                                $typeData = $idType ? $ctrlType->getTypeById($idType) : null;
+                                $typeName = is_object($typeData)
+                                    ? $typeData->getValType()
+                                    : (is_array($typeData) ? ($typeData['valType'] ?? '') : '');
+                            ?>
+                            <tr>
+                                <td><?= htmlspecialchars($valBesoin ?: 'N/A') ?></td>
+                                <td><?= htmlspecialchars($villeName ?: 'N/A') ?></td>
+                                <td><?= htmlspecialchars($typeName ?: 'N/A') ?></td>
+                            </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>

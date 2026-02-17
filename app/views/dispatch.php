@@ -1,66 +1,57 @@
 <?php
-use app\controllers\ControllerDispatchFille;
 use app\controllers\ControllerDispatchMere;
-use app\controllers\ControllerProduit;
 use app\controllers\ControllerVille;
 
 include __DIR__ . '/includes/header.php';
 
+$controllerDispatchMere = new ControllerDispatchMere();
+$controllerVille = new ControllerVille();
 
-
-$dM = new ControllerDispatchMere();
-$meres = $dM->getAllDispatchMeres();
-
-$dF = new ControllerDispatchFille();
-$filles = $dF->getAllDispatchFilles();
-
-$cv = new ControllerVille();
-
-$prod = new ControllerProduit();
+$meres = $controllerDispatchMere->getAllDispatchMeres();
 ?>
 
 <div class="container">
     <div class="page-title">
-        <h2><i class="fas fa-truck"></i> Gestion des dispatch</h2>
-        <p>Liste des dispatch mère et fille (données via controllers si possible)</p>
+        <h2><i class="fas fa-truck"></i> Gestion des Dispatch Mère</h2>
+        <p>Cliquez sur une ligne pour voir les détails et les produits associés</p>
     </div>
 
     <div class="card">
-        <div class="card-header"><h5>Dispatchs (Mère)</h5></div>
+        <div class="card-header"><h5>Liste des Dispatchs (Mère)</h5></div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-striped">
+                <table class="table table-striped table-hover">
                     <thead>
-                        <tr><th>Ville</th><th>Date et heure</th></tr>
+                        <tr>
+                            <th>ID Dispatch</th>
+                            <th>Ville</th>
+                            <th>Date et Heure</th>
+                            <th>Action</th>
+                        </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($meres as $m): ?>
+                        <?php if (!empty($meres)): ?>
+                            <?php foreach ($meres as $mere): ?>
+                                <?php 
+                                    $villeData = $controllerVille->getVilleById(isset($mere['id_ville']) ? $mere['id_ville'] : null);
+                                    $villeName = is_object($villeData) ? $villeData->getValVille() : (isset($villeData['val_ville']) ? $villeData['val_ville'] : 'Non définie');
+                                ?>
+                                <tr style="cursor: pointer;" onclick="window.location.href = '<?= BASE_URL ?>/dispatchDetail?id=<?= isset($mere['id_Dispatch_mere']) ? htmlspecialchars($mere['id_Dispatch_mere']) : '' ?>'">
+                                    <td><?= isset($mere['id_Dispatch_mere']) ? htmlspecialchars($mere['id_Dispatch_mere']) : '' ?></td>
+                                    <td><?= htmlspecialchars($villeName) ?></td>
+                                    <td><?= isset($mere['date_dispatch']) ? htmlspecialchars($mere['date_dispatch']) : '' ?></td>
+                                    <td>
+                                        <a href="<?= BASE_URL ?>/dispatchDetail?id=<?= isset($mere['id_Dispatch_mere']) ? htmlspecialchars($mere['id_Dispatch_mere']) : '' ?>" class="btn btn-sm btn-info">
+                                            <i class="fas fa-eye"></i> Voir détails
+                                        </a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
                             <tr>
-                                <td><?= htmlspecialchars($cv->getVilleById($m['id_ville'])->getValVille() ?? '') ?></td>
-                                <td><?= htmlspecialchars($m['date_dispatch'] ?? '') ?></td>
+                                <td colspan="4" class="text-center text-muted">Aucun dispatch mère enregistré</td>
                             </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <div class="card mt-3">
-        <div class="card-header"><h5>Dispatchs (Fille)</h5></div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                        <tr><th>Produit</th><th>Quantité</th></tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($filles as $f): ?>
-                            <tr>
-                                <td><?= htmlspecialchars($prod->getProduitById($f['id_produit'])->getValProduit() ?? '') ?></td>
-                                <td><?= htmlspecialchars($f['quantite'] ?? '') ?></td>
-                            </tr>
-                        <?php endforeach; ?>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>

@@ -21,12 +21,18 @@ $villes = $controllerVille->getAllVilles();
                     <thead>
                         <tr>
                             <th>Ville</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                     <?php foreach ($villes as $ville): ?>
                         <tr>
-                            <td><strong><?= htmlspecialchars($ville['valVille']) ?></strong></td>
+                            <td><strong><?= htmlspecialchars($ville['valVille'] ?? '') ?></strong></td>
+                            <td>
+                                <a class="btn btn-sm btn-info" href="<?= BASE_URL ?>/villeDetail?id=<?= htmlspecialchars($ville['idVille'] ?? '') ?>">
+                                    <i class="fas fa-eye"></i> Voir plus
+                                </a>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>

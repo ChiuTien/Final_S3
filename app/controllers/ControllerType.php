@@ -8,8 +8,8 @@ use app\repository\RepType;
 class ControllerType {
     private RepType $typeRepo;
 
-    public function __construct(RepType $typeRepo) {
-        $this->typeRepo = $typeRepo;
+    public function __construct() {
+        $this->typeRepo = new RepType();
     }
 
     public function addType(Type $type) {

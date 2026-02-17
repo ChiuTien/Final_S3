@@ -34,7 +34,15 @@ class RepDispatchMere
         $stmt = $this->db->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $dispatch = new DispatchMere();
+
+        $dispatch->setIdDispatchMere($data['id_Dispatch_mere']);
+        $dispatch->setIdVille($data['id_ville']);
+        $dispatch->setDateDispatch($data['date_dispatch']);
+        
+        return $dispatch;
     }
 
     public function getAllDispatchMeres() {
