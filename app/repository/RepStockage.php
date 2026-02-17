@@ -123,4 +123,62 @@ class RepStockage
             throw $th;
         }
     }
+
+    public function increaseQuantiteByProduitId(int $idProduit, float $quantite): void
+    {
+        try {
+            $sql = "SELECT idStockage, quantite FROM Stockage WHERE idProduit = :idProduit";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':idProduit', $idProduit, PDO::PARAM_INT);
+            $stmt->execute();
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($row) {
+                $nouvelleQuantite = (float) $row['quantite'] + $quantite;
+                $updateSql = "UPDATE Stockage SET quantite = :quantite WHERE idStockage = :idStockage";
+                $updateStmt = $this->db->prepare($updateSql);
+                $updateStmt->bindValue(':quantite', $nouvelleQuantite, PDO::PARAM_STR);
+                $updateStmt->bindValue(':idStockage', $row['idStockage'], PDO::PARAM_INT);
+                $updateStmt->execute();
+                return;
+            }
+
+            $insertSql = "INSERT INTO Stockage (idProduit, quantite) VALUES (:idProduit, :quantite)";
+            $insertStmt = $this->db->prepare($insertSql);
+            $insertStmt->bindValue(':idProduit', $idProduit, PDO::PARAM_INT);
+            $insertStmt->bindValue(':quantite', $quantite, PDO::PARAM_STR);
+            $insertStmt->execute();
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+    public function decreaseQuantiteByProduitId(int $idProduit, float $quantite): void
+    {
+        try {
+            $sql = "SELECT idStockage, quantite FROM Stockage WHERE idProduit = :idProduit";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':idProduit', $idProduit, PDO::PARAM_INT);
+            $stmt->execute();
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$row) {
+                throw new \Exception('Stockage non trouve pour ce produit');
+            }
+
+            $stockActuel = (float) $row['quantite'];
+            if ($stockActuel < $quantite) {
+                throw new \Exception('Stock insuffisant pour ce produit');
+            }
+
+            $nouvelleQuantite = $stockActuel - $quantite;
+            $updateSql = "UPDATE Stockage SET quantite = :quantite WHERE idStockage = :idStockage";
+            $updateStmt = $this->db->prepare($updateSql);
+            $updateStmt->bindValue(':quantite', $nouvelleQuantite, PDO::PARAM_STR);
+            $updateStmt->bindValue(':idStockage', $row['idStockage'], PDO::PARAM_INT);
+            $updateStmt->execute();
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
 }
