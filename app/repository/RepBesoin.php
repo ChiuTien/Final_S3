@@ -57,9 +57,12 @@
                 foreach ($rows as $row) {
                     $besoin = new Besoin();
                     $besoin->setIdBesoin($row['idBesoin']);
-                    $besoin->setValBesoin($row['valBesoin']);
-                    $besoin->setIdType($row['idType']);
-                    $besoin->setIdVille($row['idVille']);
+                    $besoin->setValBesoin($row['valBesoin'] ?? '');
+                    $besoin->setIdType($row['idType'] ?? null);
+                    // idVille est optionnel, peut ne pas exister dans la table
+                    if (isset($row['idVille'])) {
+                        $besoin->setIdVille($row['idVille']);
+                    }
                     $besoins[] = $besoin;
                 }
                 return $besoins;
@@ -67,7 +70,7 @@
                 throw $th;
             }
         }
-        public function getBesoinById($idBesoin) :?Besoin {
+        public function getBesoinById($idBesoin) :Besoin {
             try {
                 $sql = "SELECT * FROM Besoin WHERE idBesoin = :idBesoin";
                 $stmt = $this->db->prepare($sql);
@@ -75,7 +78,7 @@
                 $stmt->execute();
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
                 if (!$row) {
-                    return null;
+                    throw new \Exception("Besoin non trouvé");
                 }
                 $besoin = new Besoin();
                 $besoin->setIdBesoin($row['idBesoin']);

@@ -28,6 +28,7 @@
                 <li><a href="<?= BASE_URL ?>/villes"><i class="fas fa-city"></i>Villes</a></li>
                 <li><a href="<?= BASE_URL ?>/besoins"><i class="fas fa-list"></i>Besoins</a></li>
                 <li><a href="<?= BASE_URL ?>/donsAffichage"><i class="fas fa-gift"></i>Dons</a></li>
+                <li><a href="<?= BASE_URL ?>/stockage"><i class="fas fa-warehouse"></i>Stock</a></li>
                 <li><a href="<?= BASE_URL ?>/dispatch"><i class="fas fa-truck"></i>Dispatch</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle"><i class="fas fa-plus-circle"></i>Insertions <i class="fas fa-chevron-down" style="font-size: 12px; margin-left: 5px;"></i></a>

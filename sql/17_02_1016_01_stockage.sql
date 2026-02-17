@@ -1,0 +1,5 @@
+CREATE OR REPLACE TABLE Stockage(
+    idStockage INT PRIMARY KEY AUTO_INCREMENT,
+    idProduit INT NOT NULL UNIQUE,
+    quantite INT
+);

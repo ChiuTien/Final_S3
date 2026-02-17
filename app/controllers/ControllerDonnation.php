@@ -3,19 +3,26 @@
 
     use app\models\Donnation;
     use app\repository\RepDonnation;
+    use app\repository\RepStockage;
 
     class ControllerDonnation {
         // Attribut
         private RepDonnation $repDonnation;
+        private RepStockage $repStockage;
 
         // Constructeur
         public function __construct() {
             $this->repDonnation = new RepDonnation();
+            $this->repStockage = new RepStockage();
         }
 
         // Méthodes
         public function addDonnation(Donnation $donnation): void {
             $this->repDonnation->addDonnation($donnation);
+            $this->repStockage->increaseQuantiteByProduitId(
+                $donnation->getIdProduit(),
+                (float) $donnation->getQuantiteProduit()
+            );
         }
 
         public function deleteDonnation(int $idDonnation): void {
