@@ -59,9 +59,6 @@ include __DIR__ . '/includes/header.php';
             <div class="card-header"><h5>Aperçu par Ville</h5></div>
             <div class="card-body">
                 <?php
-                    $controllerBesoin = new \app\controllers\ControllerBesoin();
-                    $controllerProduitBesoin = new \app\controllers\ControllerProduitBesoin();
-                    $controllerProduit = new \app\controllers\ControllerProduit();
                     $equivalenceDates = [];
                     if (isset($controllerEquivalence)) {
                         $equivalenceDates = $controllerEquivalence->getAllEquivalenceDate();
