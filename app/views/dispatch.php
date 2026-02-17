@@ -1,7 +1,7 @@
 <?php
-
+// Vue pour la gestion des Dispatch Mère
+// Toutes les données sont préparées dans routes.php
 include __DIR__ . '/includes/header.php';
-
 ?>
 
 <div class="container">
@@ -54,6 +54,7 @@ include __DIR__ . '/includes/header.php';
 
 </div>
 
+<<<<<<< HEAD
         <!-- Tableau dynamique demandé: ville | date (Equivalence_date) | quantité (Donnation) | prix (EquivalenceProduit) | voir plus -->
         <div class="card mt-4">
             <div class="card-header"><h5>Aperçu par Ville</h5></div>
@@ -189,3 +190,6 @@ include __DIR__ . '/includes/header.php';
         
 
     <?php include __DIR__ . '/includes/footer.php'; ?>
+=======
+<?php include __DIR__ . '/includes/footer.php'; ?>
+>>>>>>> 2a1663ffd39e822099852569bac0a093b60f166c

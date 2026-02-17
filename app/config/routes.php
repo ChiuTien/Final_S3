@@ -30,12 +30,59 @@ use app\models\DispatchFille;
 // This wraps all routes in the group with the SecurityHeadersMiddleware
 $router->group('', function(Router $router) use ($app) {
 
+    // Route pour la page d'accueil
+    $router->get('/', function() use ($app) {
+        $controllerVille = new ControllerVille();
+        $controllerBesoin = new ControllerBesoin();
+        $controllerDon = new ControllerDon();
+        $controllerDispatchMere = new ControllerDispatchMere();
+        $controllerType = new ControllerType();
+        $controllerProduit = new ControllerProduit();
+        
+        // Récupérer les données nécessaires pour les formulaires
+        $villes = $controllerVille->getAllVilles();
+        $types = $controllerType->getAllTypes();
+        $produits = $controllerProduit->getAllProduit();
+        
+        $app->render('welcome', [
+            'controllerVille' => $controllerVille, 
+            'controllerBesoin' => $controllerBesoin, 
+            'controllerDispatchMere' => $controllerDispatchMere, 
+            'controllerDon' => $controllerDon,
+            'villes' => $villes,
+            'types' => $types,
+            'produits' => $produits
+        ]);
+    });
+
+    // Route pour l'affichage des dons
+    $router->get('/donsAffichage', function() use ($app) {
+        $controllerDon = new ControllerDon();
+        $dons = $controllerDon->getAllDons();
+        
+        $controllerDonnation = new ControllerDonnation();
+        $donnations = $controllerDonnation->getAllDonnation();
+
+        $app->render('donsAffichage', ['dons' => $dons, 'donnations' => $donnations]);
+    });
+
     $router->get('/villes', function() use ($app) {
-        $app->render('villes');
+        $controllerVille = new ControllerVille();
+        $villes = $controllerVille->getAllVilles();
+        $app->render('villes', ['controllerVille' => $controllerVille, 'villes' => $villes]);
     });
 
     $router->get('/besoins', function() use ($app) {
-        $app->render('besoins');
+        $ctrl = new ControllerBesoin();
+        $ctrlVille = new ControllerVille();
+        $ctrlType = new ControllerType();
+        $besoins = $ctrl->getAllBesoin();
+
+        $app->render('besoins', [
+            'besoins' => $besoins,
+            'ctrlVille' => $ctrlVille,
+            'ctrlType' => $ctrlType
+        ]);
     });
 
     // Route pour afficher la liste des dispatch mère
@@ -70,7 +117,29 @@ $router->group('', function(Router $router) use ($app) {
     // Route pour afficher les détails d'une dispatch mère et ses filles
     $router->get('/dispatchDetail', function() use ($app) {
         $idDispatchMere = $_GET['id'] ?? null;
-        $app->render('dispatchDetail', ['mereId' => $idDispatchMere]);
+        
+        if (!$idDispatchMere) {
+            $app->redirect('/dispatch');
+            return;
+        }
+
+        $controllerDispatchMere = new ControllerDispatchMere();
+        $controllerDispatchFille = new ControllerDispatchFille();
+        $controllerVille = new ControllerVille();
+        $controllerProduit = new ControllerProduit();
+
+        $mere = $controllerDispatchMere->getDispatchMereById($idDispatchMere);
+        $filles = $controllerDispatchFille->getFillesByMere($idDispatchMere);
+
+        $app->render('dispatchDetail', [
+            'mereId' => $idDispatchMere,
+            'mere' => $mere,
+            'filles' => $filles,
+            'controllerDispatchMere' => $controllerDispatchMere,
+            'controllerDispatchFille' => $controllerDispatchFille,
+            'controllerVille' => $controllerVille,
+            'controllerProduit' => $controllerProduit
+        ]);
     });
 
     // Route pour ajouter une dispatch fille à une dispatch mère

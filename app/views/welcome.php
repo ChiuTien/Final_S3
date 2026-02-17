@@ -1,28 +1,8 @@
 <!-- Inclusion du header -->
 <?php
 include __DIR__ . '/includes/header.php';
-
-$besoins = $controllerBesoin->getAllBesoin();
-$villes = $controllerVille->getAllVilles();
-$types = $controllerType->getAllTypes();
-
-$villeMap = [];
-foreach ($villes as $ville) {
-    $id = is_object($ville) ? $ville->getIdVille() : ($ville['idVille'] ?? null);
-    if ($id === null) {
-        continue;
-    }
-    $villeMap[$id] = is_object($ville) ? $ville->getValVille() : ($ville['valVille'] ?? '');
-}
-
-$typeMap = [];
-foreach ($types as $type) {
-    $id = is_object($type) ? $type->getIdType() : ($type['idType'] ?? null);
-    if ($id === null) {
-        continue;
-    }
-    $typeMap[$id] = is_object($type) ? $type->getValType() : ($type['valType'] ?? '');
-}
+// Toutes les données sont déjà préparées dans routes.php
+// On n'a plus besoin d'initialiser quoi que ce soit ici
 ?>
 
 <div class="container">
