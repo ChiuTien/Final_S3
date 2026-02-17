@@ -11,7 +11,7 @@ $controllerDispatchFille = new ControllerDispatchFille();
 $controllerVille = new ControllerVille();
 $controllerProduit = new ControllerProduit();
 
-$mereId = $mereId ?? null;
+$mereId = $mereId ?? ($_GET['id'] ?? null);
 $mere = $mereId ? $controllerDispatchMere->getDispatchMereById($mereId) : null;
 $filles = $mereId ? $controllerDispatchFille->getFillesByMere($mereId) : [];
 
@@ -62,7 +62,6 @@ $villeName = is_object($villeData) ? $villeData->getValVille() : (isset($villeDa
                         <table class="table table-striped table-hover">
                             <thead>
                                 <tr>
-                                    <th>ID Distribution</th>
                                     <th>Produit</th>
                                     <th>Quantité</th>
                                 </tr>
@@ -75,7 +74,6 @@ $villeName = is_object($villeData) ? $villeData->getValVille() : (isset($villeDa
                                             $produitName = is_object($produitData) ? $produitData->getValProduit() : (isset($produitData['val_produit']) ? $produitData['val_produit'] : 'Non défini');
                                         ?>
                                         <tr>
-                                            <td><?= isset($fille['id_Dispatch_fille']) ? htmlspecialchars($fille['id_Dispatch_fille']) : '' ?></td>
                                             <td><?= htmlspecialchars($produitName) ?></td>
                                             <td><?= isset($fille['quantite']) ? htmlspecialchars($fille['quantite']) : '' ?></td>
                                         </tr>
@@ -88,6 +86,41 @@ $villeName = is_object($villeData) ? $villeData->getValVille() : (isset($villeDa
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- Formulaire d'ajout de Dispatch Fille -->
+                    <hr>
+                    <h5 class="mt-4 mb-3"><i class="fas fa-plus-circle"></i> Ajouter un Produit à ce Dispatch</h5>
+                    <form method="POST" action="<?= BASE_URL ?>/dispatchDetail/addFille?idDispatchMere=<?= htmlspecialchars($mereId) ?>">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="idProduit"><i class="fas fa-box"></i> Produit</label>
+                                    <select class="form-control form-control-sm" id="idProduit" name="idProduit" required>
+                                        <option value="">-- Sélectionner un produit --</option>
+                                        <?php 
+                                            $produits = $controllerProduit->getAllProduit();
+                                            foreach ($produits as $produit):
+                                                $prodId = is_object($produit) ? $produit->getIdProduit() : ($produit['id_produit'] ?? '');
+                                                $prodVal = is_object($produit) ? $produit->getValProduit() : ($produit['val_produit'] ?? '');
+                                        ?>
+                                            <option value="<?= htmlspecialchars($prodId) ?>">
+                                                <?= htmlspecialchars($prodVal) ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="quantite"><i class="fas fa-list-ol"></i> Quantité</label>
+                                    <input type="number" class="form-control form-control-sm" id="quantite" name="quantite" placeholder="Quantité" step="0.01" min="1" required>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success btn-sm">
+                            <i class="fas fa-save"></i> Ajouter
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>

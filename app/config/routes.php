@@ -17,6 +17,7 @@ use app\controllers\ControllerConfig;
 use app\models\Don;
 use app\models\Donnation;
 use app\models\Achat;
+use app\models\DispatchFille;
 
 /** 
  * @var Router $router 
@@ -43,6 +44,32 @@ $router->group('', function(Router $router) use ($app) {
     $router->get('/dispatchDetail', function() use ($app) {
         $idDispatchMere = $_GET['id'] ?? null;
         $app->render('dispatchDetail', ['mereId' => $idDispatchMere]);
+    });
+
+    // Route pour ajouter une dispatch fille à une dispatch mère
+    $router->post('/dispatchDetail/addFille', function() use ($app) {
+        $idDispatchMere = $_GET['idDispatchMere'] ?? null;
+        $idProduit = $_POST['idProduit'] ?? null;
+        $quantite = $_POST['quantite'] ?? null;
+        
+        if (!$idDispatchMere || !$idProduit || !$quantite || $quantite <= 0) {
+            $app->redirect('/dispatchDetail?id=' . urlencode($idDispatchMere));
+            return;
+        }
+        
+        try {
+            $controllerDispatchFille = new ControllerDispatchFille();
+            $dispatchFille = new DispatchFille();
+            $dispatchFille->setIdDispatchMere($idDispatchMere);
+            $dispatchFille->setIdProduit($idProduit);
+            $dispatchFille->setQuantite($quantite);
+            
+            $controllerDispatchFille->addDispatchFille($dispatchFille);
+            
+            $app->redirect('/dispatchDetail?id=' . urlencode($idDispatchMere));
+        } catch (\Exception $e) {
+            $app->redirect('/dispatchDetail?id=' . urlencode($idDispatchMere));
+        }
     });
 
     // Route pour afficher les détails d'une ville

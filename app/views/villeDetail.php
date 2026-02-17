@@ -266,7 +266,7 @@ if (!$idVille) {
                                 <?php foreach ($dispatchFiltered as $dispatch): ?>
                                     <?php if (!is_object($dispatch) && !is_array($dispatch)) continue; ?>
                                     <?php
-                                        $dispatchId = is_object($dispatch) ? $dispatch->getIdDispatchMere() : ($dispatch['id_dispatch_mere'] ?? '');
+                                        $dispatchId = is_object($dispatch) ? $dispatch->getIdDispatchMere() : ($dispatch['id_Dispatch_mere'] ?? '');
                                         $dispatchDate = is_object($dispatch) ? $dispatch->getDateDispatch() : ($dispatch['date_dispatch'] ?? '');
                                         if ($dispatchDate instanceof \DateTime) {
                                             $dispatchDate = $dispatchDate->format('Y-m-d');
