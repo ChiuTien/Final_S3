@@ -8,6 +8,7 @@ use flight\net\Router;
 use app\controllers\ControllerDon;
 use app\controllers\ControllerDonnation;
 use app\controllers\ControllerVille;
+use app\controllers\ControllerRegion;
 use app\controllers\ControllerBesoin;
 use app\controllers\ControllerType;
 use app\controllers\ControllerDispatchMere;
@@ -17,8 +18,6 @@ use app\controllers\ControllerStockage;
 use app\controllers\ControllerProduitBesoin;
 use app\controllers\ControllerAchat;
 use app\controllers\ControllerConfig;
-use app\models\ProduitBesoin;
-use app\models\EquivalenceProduit;
 use app\models\Don;
 use app\models\Donnation;
 use app\models\Achat;
@@ -41,78 +40,235 @@ $router->group('', function(Router $router) use ($app) {
         $controllerType = new ControllerType();
         $controllerProduit = new ControllerProduit();
         
-        // Récupérer les données nécessaires pour les formulaires
+        // Récupérer les données nécessaires pour les formulaires et statistiques
         $villes = $controllerVille->getAllVilles();
         $types = $controllerType->getAllTypes();
         $produits = $controllerProduit->getAllProduit();
+        $besoins = $controllerBesoin->getAllBesoin();
+        
+        // Créer les maps pour les affichages
+        $villeMap = [];
+        foreach ($villes as $ville) {
+            $id = is_object($ville) ? $ville->getIdVille() : ($ville['idVille'] ?? null);
+            if ($id !== null) {
+                $villeMap[$id] = is_object($ville) ? $ville->getValVille() : ($ville['valVille'] ?? '');
+            }
+        }
+        
+        $typeMap = [];
+        foreach ($types as $type) {
+            $id = is_object($type) ? $type->getIdType() : ($type['idType'] ?? null);
+            if ($id !== null) {
+                $typeMap[$id] = is_object($type) ? $type->getValType() : ($type['valType'] ?? '');
+            }
+        }
+        
+        // Calculer les statistiques
+        $nombreVilles = $controllerVille->getNombreVille();
+        $nombreBesoins = $controllerBesoin->getNombreBesoin();
+        $nombreDons = $controllerDon->getNombreDons();
+        $nombreDispatches = $controllerDispatchMere->getNombreDispatchMeres();
         
         $app->render('welcome', [
-            'controllerVille' => $controllerVille, 
-            'controllerBesoin' => $controllerBesoin, 
-            'controllerDispatchMere' => $controllerDispatchMere, 
-            'controllerDon' => $controllerDon,
             'villes' => $villes,
             'types' => $types,
-            'produits' => $produits
+            'produits' => $produits,
+            'besoins' => $besoins,
+            'villeMap' => $villeMap,
+            'typeMap' => $typeMap,
+            'nombreVilles' => $nombreVilles,
+            'nombreBesoins' => $nombreBesoins,
+            'nombreDons' => $nombreDons,
+            'nombreDispatches' => $nombreDispatches
         ]);
     });
 
-    // Route pour l'affichage des dons
-    $router->get('/donsAffichage', function() use ($app) {
-        $controllerDon = new ControllerDon();
-        $dons = $controllerDon->getAllDons();
-        
-        $controllerDonnation = new ControllerDonnation();
-        $donnations = $controllerDonnation->getAllDonnation();
-
-        $app->render('donsAffichage', ['dons' => $dons, 'donnations' => $donnations]);
-    });
-
+    // Route pour l'affichage des villes
     $router->get('/villes', function() use ($app) {
         $controllerVille = new ControllerVille();
         $villes = $controllerVille->getAllVilles();
-        $app->render('villes', ['controllerVille' => $controllerVille, 'villes' => $villes]);
+        $app->render('display/villes', ['controllerVille' => $controllerVille, 'villes' => $villes]);
     });
 
     $router->get('/besoins', function() use ($app) {
-        $ctrl = new ControllerBesoin();
-        $ctrlVille = new ControllerVille();
-        $ctrlType = new ControllerType();
-        $besoins = $ctrl->getAllBesoin();
+        $controllerBesoin = new ControllerBesoin();
+        $controllerVille = new ControllerVille();
+        $controllerType = new ControllerType();
+        
+        $besoins = $controllerBesoin->getAllBesoin();
+        $villes = $controllerVille->getAllVilles();
+        $types = $controllerType->getAllTypes();
+        
+        // Créer des maps pour les lookups
+        $villeMap = [];
+        foreach ($villes as $ville) {
+            $id = is_object($ville) ? $ville->getIdVille() : ($ville['idVille'] ?? $ville['id_ville'] ?? null);
+            if ($id !== null) {
+                $villeMap[$id] = is_object($ville) ? $ville->getValVille() : ($ville['valVille'] ?? $ville['val_ville'] ?? '');
+            }
+        }
+        
+        $typeMap = [];
+        foreach ($types as $type) {
+            $id = is_object($type) ? $type->getIdType() : ($type['idType'] ?? $type['id_type'] ?? null);
+            if ($id !== null) {
+                $typeMap[$id] = is_object($type) ? $type->getValType() : ($type['valType'] ?? $type['val_type'] ?? '');
+            }
+        }
+        
+        // Formater les besoins avec noms de ville/type
+        $besoinsFormatted = [];
+        foreach ($besoins as $besoin) {
+            $valBesoin = is_object($besoin) ? $besoin->getValBesoin() : ($besoin['valBesoin'] ?? $besoin['val_besoin'] ?? '');
+            $idVille = is_object($besoin) ? $besoin->getIdVille() : ($besoin['idVille'] ?? $besoin['id_ville'] ?? null);
+            $idType = is_object($besoin) ? $besoin->getIdType() : ($besoin['idType'] ?? $besoin['id_type'] ?? null);
+            
+            $besoinsFormatted[] = [
+                'valBesoin' => $valBesoin,
+                'villeName' => isset($villeMap[$idVille]) ? $villeMap[$idVille] : 'N/A',
+                'typeName' => isset($typeMap[$idType]) ? $typeMap[$idType] : 'N/A'
+            ];
+        }
 
-        $app->render('besoins', [
-            'besoins' => $besoins,
-            'ctrlVille' => $ctrlVille,
-            'ctrlType' => $ctrlType
-        ]);
+        $app->render('display/besoins', ['besoinsFormatted' => $besoinsFormatted]);
     });
 
     // Route pour afficher la liste des dispatch mère
     $router->get('/dispatch', function() use ($app) {
-
+        // Récupérer tous les contrôleurs et données
         $controllerVille = new ControllerVille();
-        $controllerEquivalence = new ControllerEquivalenceDate();
-        $controllerDonnation = new ControllerDonnation();
+        $controllerBesoin = new ControllerBesoin();
+        $controllerEquivalenceDate = new ControllerEquivalenceDate();
+        $controllerProduitBesoin = new ControllerProduitBesoin();
         $controllerEquivalenceProduit = new ControllerEquivalenceProduit();
         $controllerDispatchMere = new ControllerDispatchMere();
-        $controllerBesoin = new ControllerBesoin();
-        $controllerProduitBesoin = new ControllerProduitBesoin();
+        $controllerDonnation = new ControllerDonnation();
         $controllerProduit = new ControllerProduit();
-
 
         $villes = $controllerVille->getAllVilles();
         $dispatchMeres = $controllerDispatchMere->getAllDispatchMeres();
+        $besoins = $controllerBesoin->getAllBesoin();
+        $equivalenceDates = $controllerEquivalenceDate->getAllEquivalenceDate();
+        $produitBesoins = $controllerProduitBesoin->getAllProduitBesoin();
+        $equivalenceProduits = $controllerEquivalenceProduit->getAllEquivalenceProduit();
+        $produits = $controllerProduit->getAllProduit();
 
-        $app->render('dispatch', [
-            'villes' => $villes,
-            'controllerBesoin' => $controllerBesoin,
-            'controllerProduitBesoin' => $controllerProduitBesoin,
-            'controllerProduit' => $controllerProduit,
-            'dispatchMeres' => $dispatchMeres,
-            'controllerVille' => $controllerVille,
-            'controllerEquivalence' => $controllerEquivalence,
-            'controllerDonnation' => $controllerDonnation,
-            'controllerEquivalenceProduit' => $controllerEquivalenceProduit
+        // Créer des maps pour les lookups rapides
+        $villeMap = [];
+        foreach ($villes as $ville) {
+            $id = is_object($ville) ? $ville->getIdVille() : ($ville['idVille'] ?? $ville['id_ville'] ?? null);
+            if ($id !== null) {
+                $villeMap[$id] = is_object($ville) ? $ville->getValVille() : ($ville['valVille'] ?? $ville['val_ville'] ?? '');
+            }
+        }
+
+        $produitMap = [];
+        foreach ($produits as $produit) {
+            $id = is_object($produit) ? $produit->getIdProduit() : ($produit['idProduit'] ?? $produit['id_produit'] ?? null);
+            if ($id !== null) {
+                $produitMap[$id] = is_object($produit) ? $produit->getValProduit() : ($produit['valProduit'] ?? $produit['val_produit'] ?? '');
+            }
+        }
+
+        // Formater les dispatchMeres avec noms de ville
+        $dispatchMeresList = [];
+        foreach ($dispatchMeres as $mere) {
+            $mereId = is_object($mere) ? $mere->getIdDispatchMere() : ($mere['idDispatchMere'] ?? $mere['id_Dispatch_mere'] ?? null);
+            $mereVilleId = is_object($mere) ? $mere->getIdVille() : ($mere['idVille'] ?? $mere['id_ville'] ?? null);
+            $mereDate = is_object($mere) ? $mere->getDateDispatch() : ($mere['dateDispatch'] ?? $mere['date_dispatch'] ?? '');
+
+            $dispatchMeresList[] = [
+                'id' => $mereId,
+                'villeName' => isset($villeMap[$mereVilleId]) ? $villeMap[$mereVilleId] : 'N/A',
+                'date' => $mereDate
+            ];
+        }
+
+        // Pré-calculer les données pour le tableau "Aperçu par Ville"
+        $villeDispatchData = [];
+        foreach ($villes as $ville) {
+            $villeId = is_object($ville) ? $ville->getIdVille() : ($ville['idVille'] ?? $ville['id_ville'] ?? null);
+            $villeName = isset($villeMap[$villeId]) ? $villeMap[$villeId] : 'N/A';
+
+            // Trouver un besoin pour cette ville
+            $besoinTrouve = null;
+            foreach ($besoins as $b) {
+                $bIdVille = is_object($b) ? $b->getIdVille() : ($b['idVille'] ?? $b['id_ville'] ?? null);
+                if ($bIdVille == $villeId) {
+                    $besoinTrouve = is_object($b) ? $b->getIdBesoin() : ($b['idBesoin'] ?? $b['id_besoin'] ?? null);
+                    break;
+                }
+            }
+
+            // Obtenir la date d'équivalence pour ce besoin
+            $dateEquivalence = 'N/A';
+            if ($besoinTrouve) {
+                foreach ($equivalenceDates as $ed) {
+                    $edIdBesoin = is_object($ed) ? $ed->getIdBesoin() : ($ed['idBesoin'] ?? $ed['id_besoin'] ?? null);
+                    if ($edIdBesoin == $besoinTrouve) {
+                        $dateEquivalence = is_object($ed) ? $ed->getDateEquivalence() : ($ed['dateEquivalence'] ?? $ed['date_equivalence'] ?? 'N/A');
+                        break;
+                    }
+                }
+            }
+
+            // Trouver les produits et quantités pour ce besoin
+            $produis = [];
+            $quantiteDonneeTotal = 'N/A';
+            $prixEquivalenceTotal = 'N/A';
+
+            if ($besoinTrouve) {
+                foreach ($produitBesoins as $pb) {
+                    $pbIdBesoin = is_object($pb) ? $pb->getIdBesoin() : ($pb['idBesoin'] ?? $pb['id_besoin'] ?? null);
+                    if ($pbIdBesoin == $besoinTrouve) {
+                        $pbIdProduit = is_object($pb) ? $pb->getIdProduit() : ($pb['idProduit'] ?? $pb['id_produit'] ?? null);
+                        $pName = isset($produitMap[$pbIdProduit]) ? $produitMap[$pbIdProduit] : 'Produit #' . $pbIdProduit;
+
+                        // Quantité donnée pour ce produit
+                        $pQuant = 'N/A';
+                        try {
+                            $pQuant = $controllerDonnation->getQuantiteProduitByIdProduit($pbIdProduit);
+                        } catch (\Exception $e) {
+                            $pQuant = 0;
+                        }
+                        if ($besoinTrouve && $quantiteDonneeTotal === 'N/A' && is_numeric($pQuant)) {
+                            $quantiteDonneeTotal = $pQuant;
+                        }
+
+                        // Prix d'équivalence pour ce produit
+                        $pPrix = 'N/A';
+                        foreach ($equivalenceProduits as $ep) {
+                            $epIdProduit = is_object($ep) ? $ep->getIdProduit() : ($ep['idProduit'] ?? $ep['id_produit'] ?? null);
+                            if ($epIdProduit == $pbIdProduit) {
+                                $pPrix = is_object($ep) ? $ep->getPrix() : ($ep['prix'] ?? $ep['price'] ?? 'N/A');
+                                if ($prixEquivalenceTotal === 'N/A' && is_numeric($pPrix)) {
+                                    $prixEquivalenceTotal = $pPrix;
+                                }
+                                break;
+                            }
+                        }
+
+                        $produis[] = [
+                            'name' => $pName,
+                            'quant' => $pQuant,
+                            'prix' => $pPrix
+                        ];
+                    }
+                }
+            }
+
+            $villeDispatchData[] = [
+                'villeName' => $villeName,
+                'dateEquivalence' => $dateEquivalence,
+                'quantiteDonnee' => $quantiteDonneeTotal,
+                'prixEquivalence' => $prixEquivalenceTotal,
+                'produits' => $produis
+            ];
+        }
+
+        $app->render('dispatch/dispatch', [
+            'dispatchMeresList' => $dispatchMeresList,
+            'villeDispatchData' => $villeDispatchData
         ]);
     });
 
@@ -130,17 +286,70 @@ $router->group('', function(Router $router) use ($app) {
         $controllerVille = new ControllerVille();
         $controllerProduit = new ControllerProduit();
 
+        // Récupérer les données
         $mere = $controllerDispatchMere->getDispatchMereById($idDispatchMere);
         $filles = $controllerDispatchFille->getFillesByMere($idDispatchMere);
+        $produits = $controllerProduit->getAllProduit();
+        
+        // Vérifier si mere existe
+        if (!$mere) {
+            $app->redirect('/dispatch');
+            return;
+        }
 
-        $app->render('dispatchDetail', [
-            'mereId' => $idDispatchMere,
-            'mere' => $mere,
-            'filles' => $filles,
-            'controllerDispatchMere' => $controllerDispatchMere,
-            'controllerDispatchFille' => $controllerDispatchFille,
-            'controllerVille' => $controllerVille,
-            'controllerProduit' => $controllerProduit
+        // Formater les données pour la vue
+        $mereIdValue = is_object($mere) ? $mere->getIdDispatchMere() : ($mere['idDispatchMere'] ?? $mere['id_Dispatch_mere'] ?? null);
+        $mereVilleId = is_object($mere) ? $mere->getIdVille() : ($mere['idVille'] ?? $mere['id_ville'] ?? null);
+        $mereDate = is_object($mere) ? $mere->getDateDispatch() : ($mere['dateDispatch'] ?? $mere['date_dispatch'] ?? '');
+
+        // Obtenir le nom de la ville
+        $villeObj = $controllerVille->getVilleById($mereVilleId);
+        $villeName = is_object($villeObj) ? $villeObj->getValVille() : (is_array($villeObj) ? ($villeObj['valVille'] ?? $villeObj['val_ville'] ?? 'N/A') : 'N/A');
+
+        $mereData = [
+            'id' => $mereIdValue,
+            'villeName' => $villeName,
+            'date' => $mereDate
+        ];
+
+        // Formater les filles avec noms de produits
+        $fillesFormatted = [];
+        foreach ($filles as $fille) {
+            $filleIdProduit = is_object($fille) ? $fille->getIdProduit() : ($fille['idProduit'] ?? $fille['id_produit'] ?? null);
+            $filleQuantite = is_object($fille) ? $fille->getQuantite() : ($fille['quantite'] ?? 0);
+
+            // Trouver le nom du produit
+            $produitName = 'N/A';
+            foreach ($produits as $produit) {
+                $produitId = is_object($produit) ? $produit->getIdProduit() : ($produit['idProduit'] ?? $produit['id_produit'] ?? null);
+                if ($produitId == $filleIdProduit) {
+                    $produitName = is_object($produit) ? $produit->getValProduit() : ($produit['valProduit'] ?? $produit['val_produit'] ?? 'N/A');
+                    break;
+                }
+            }
+
+            $fillesFormatted[] = [
+                'produitName' => $produitName,
+                'quantite' => $filleQuantite
+            ];
+        }
+
+        // Formater la liste des produits pour le formulaire
+        $produitsList = [];
+        foreach ($produits as $produit) {
+            $produitId = is_object($produit) ? $produit->getIdProduit() : ($produit['idProduit'] ?? $produit['id_produit'] ?? null);
+            $produitName = is_object($produit) ? $produit->getValProduit() : ($produit['valProduit'] ?? $produit['val_produit'] ?? '');
+
+            $produitsList[] = [
+                'id' => $produitId,
+                'name' => $produitName
+            ];
+        }
+
+        $app->render('dispatch/dispatchDetail', [
+            'mereData' => $mereData,
+            'fillesFormatted' => $fillesFormatted,
+            'produitsList' => $produitsList
         ]);
     });
 
@@ -199,7 +408,7 @@ $router->group('', function(Router $router) use ($app) {
         $produits = $controllerProduit->getAllProduit();
         $produitBesoins = $controllerProduitBesoin->getAllProduitBesoin();
         
-        $app->render('villeDetail', [
+        $app->render('display/villeDetail', [
             'ville' => $ville,
             'idVille' => $idVille,
             'besoins' => $besoins,
@@ -224,7 +433,7 @@ $router->group('', function(Router $router) use ($app) {
                 $produitsById[$produit->getIdProduit()] = $produit->getValProduit();
             }
 
-            $app->render('stockage', [
+            $app->render('display/stockage', [
                 'stockages' => $stockages,
                 'produitsById' => $produitsById
             ]);
@@ -241,6 +450,34 @@ $router->group('', function(Router $router) use ($app) {
 
         $besoins = $controllerBesoin->getAllBesoin();
         $produitBesoins = $controllerProduitBesoin->getAllProduitBesoin();
+        $villes = $controllerVille->getAllVilles();
+        $produits = $controllerProduit->getAllProduit();
+        $equivalenceProduits = $controllerEquivalenceProduit->getAllEquivalenceProduit();
+        
+        // Créer les maps
+        $villeMap = [];
+        foreach ($villes as $ville) {
+            $id = is_object($ville) ? $ville->getIdVille() : ($ville['idVille'] ?? null);
+            if ($id !== null) {
+                $villeMap[$id] = is_object($ville) ? $ville->getValVille() : ($ville['valVille'] ?? '');
+            }
+        }
+        
+        $produitMap = [];
+        foreach ($produits as $produit) {
+            $id = is_object($produit) ? $produit->getIdProduit() : ($produit['idProduit'] ?? null);
+            if ($id !== null) {
+                $produitMap[$id] = is_object($produit) ? $produit->getValProduit() : ($produit['valProduit'] ?? '');
+            }
+        }
+        
+        $equiproduitMap = [];
+        foreach ($equivalenceProduits as $ep) {
+            $id = is_object($ep) ? $ep->getIdProduit() : ($ep['idProduit'] ?? null);
+            if ($id !== null) {
+                $equiproduitMap[$id] = is_object($ep) ? ($ep->getQuantite() ?? 0) : ($ep['quantite'] ?? 0);
+            }
+        }
         
         // Trier par idBesoin (plus ancien d'abord)
         usort($besoins, function($a, $b) {
@@ -249,14 +486,12 @@ $router->group('', function(Router $router) use ($app) {
             return $aId - $bId;
         });
 
-        $app->render('dispatchDate', [
+        $app->render('dispatch/dispatchDate', [
             'besoins' => $besoins,
             'produitBesoins' => $produitBesoins,
-            'controllerVille' => $controllerVille,
-            'controllerProduitBesoin' => $controllerProduitBesoin,
-            'controllerProduit' => $controllerProduit,
-            'controllerStockage' => $controllerStockage,
-            'controllerEquivalenceProduit' => $controllerEquivalenceProduit
+            'villeMap' => $villeMap,
+            'produitMap' => $produitMap,
+            'equiproduitMap' => $equiproduitMap
         ]);
     });
 
@@ -438,12 +673,46 @@ $router->group('', function(Router $router) use ($app) {
     // Route pour l'affichage des dons
     $router->get('/donsAffichage', function() use ($app) {
         $controllerDon = new ControllerDon();
-        $dons = $controllerDon->getAllDons();
-        
         $controllerDonnation = new ControllerDonnation();
+        
+        $dons = $controllerDon->getAllDons();
         $donnations = $controllerDonnation->getAllDonnation();
 
-        $app->render('donsAffichage', ['dons' => $dons, 'donnations' => $donnations]);
+        // Pré-calculer les statistiques
+        $totalValeurDons = 0;
+        $donsList = [];
+        foreach ($dons as $don) {
+            $prixDon = is_object($don) ? ($don->getTotalPrix() ?? 0) : ($don['totalPrix'] ?? 0);
+            $totalValeurDons += floatval($prixDon);
+            
+            $id = is_object($don) ? $don->getIdDon() : ($don['idDon'] ?? null);
+            $date = is_object($don) ? $don->getDateDon() : (isset($don['dateDon']) ? (is_string($don['dateDon']) ? new \DateTime($don['dateDon']) : $don['dateDon']) : new \DateTime());
+            
+            $donsList[] = [
+                'id' => $id,
+                'date' => $date,
+                'prix' => $prixDon
+            ];
+        }
+
+        // Formater les donnations
+        $donnationsList = [];
+        foreach ($donnations as $donnation) {
+            $donnationsList[] = [
+                'id' => is_object($donnation) ? $donnation->getIdDonnation() : ($donnation['idDonnation'] ?? null),
+                'idDon' => is_object($donnation) ? $donnation->getIdDon() : ($donnation['idDon'] ?? null),
+                'idProduit' => is_object($donnation) ? $donnation->getIdProduit() : ($donnation['idProduit'] ?? null),
+                'quantite' => is_object($donnation) ? $donnation->getQuantiteProduit() : ($donnation['quantiteProduit'] ?? 0)
+            ];
+        }
+
+        $app->render('display/donsAffichage', [
+            'donsList' => $donsList,
+            'donnationsList' => $donnationsList,
+            'nombreDons' => count($donsList),
+            'nombreDonnations' => count($donnationsList),
+            'totalValeurDons' => $totalValeurDons
+        ]);
     });
 
     // Route GET - Afficher le formulaire d'insertion de don
@@ -451,7 +720,7 @@ $router->group('', function(Router $router) use ($app) {
         $controllerProduit = new ControllerProduit();
         $produits = $controllerProduit->getAllProduit();
         
-        $app->render('donInsert', ['produits' => $produits]);
+        $app->render('crud/donInsert', ['produits' => $produits]);
     });
 
     // Route POST - Traiter l'insertion d'un don avec plusieurs donnations
@@ -474,7 +743,7 @@ $router->group('', function(Router $router) use ($app) {
                 $produitsData = $controllerProduit->getAllProduit();
                 $app->view()->set('error', 'La date et au moins un produit sont requis');
                 $app->view()->set('produits', $produitsData);
-                $app->render('donInsert');
+                $app->render('crud/donInsert');
                 return;
             }
 
@@ -520,39 +789,48 @@ $router->group('', function(Router $router) use ($app) {
             $produitsData = $controllerProduit->getAllProduit();
             $app->view()->set('error', 'Erreur lors de l\'insertion: ' . $e->getMessage());
             $app->view()->set('produits', $produitsData);
-            $app->render('donInsert');
+            $app->render('crud/donInsert');
         }
     });
 
     // Routes pour Ville
     $router->get('/villeInsert', function() use ($app) {
         $controllerVille = new ControllerVille();
+        $controllerRegion = new ControllerRegion();
         $villes = $controllerVille->getAllVilles();
-        $app->render('villeInsert', ['villes' => $villes]);
+        $regions = $controllerRegion->getAllRegions();
+        $app->render('crud/villeInsert', ['villes' => $villes, 'regions' => $regions]);
     });
 
     $router->post('/villeInsert', function() use ($app) {
         try {
             $request = $app->request();
-            $nomVille = $request->data->nomVille ?? null;
-            $idRegion = $request->data->idRegion ?? null;
+            $nomVille = trim($request->data->nomVille ?? '');
+            $idRegion = (int)($request->data->idRegion ?? 0);
 
             if (!$nomVille || !$idRegion) {
                 $controllerVille = new ControllerVille();
+                $controllerRegion = new ControllerRegion();
                 $villes = $controllerVille->getAllVilles();
+                $regions = $controllerRegion->getAllRegions();
                 $app->view()->set('error', 'Le nom et la région sont requis');
                 $app->view()->set('villes', $villes);
-                $app->render('villeInsert');
+                $app->view()->set('regions', $regions);
+                $app->render('crud/villeInsert');
                 return;
             }
 
-            $ville = new \app\models\Ville(null, $nomVille, $idRegion);
+            $ville = new \app\models\Ville();
+            $ville->setValVille($nomVille);
+            $ville->setIdRegion($idRegion);
+            
             $controllerVille = new ControllerVille();
             $controllerVille->addVille($ville);
-            $app->redirect('/villeInsert');
+            $app->redirect('/villeInsert?success=1');
         } catch (\Exception $e) {
+            error_log('Erreur villeInsert: ' . $e->getMessage());
             $app->view()->set('error', 'Erreur: ' . $e->getMessage());
-            $app->render('villeInsert');
+            $app->render('crud/villeInsert');
         }
     });
 
@@ -568,7 +846,7 @@ $router->group('', function(Router $router) use ($app) {
         $besoins = $controllerBesoin->getAllBesoin();
         $types = $controllerType->getAllTypes();
         
-        $app->render('besoinInsert', [
+        $app->render('crud/besoinInsert', [
             'villes' => $villes,
             'produits' => $produits,
             'besoins' => $besoins,
@@ -579,25 +857,26 @@ $router->group('', function(Router $router) use ($app) {
     $router->post('/besoinInsert', function() use ($app) {
         try {
             $request = $app->request();
-            $idVille = $request->data->idVille ?? null;
-            $valBesoin = $request->data->valBesoin ?? null;
-            $idType = $request->data->idType ?? null;
-            $idProduit = $request->data->idProduit ?? null;
-            $dateBesoin = $request->data->dateBesoin ?? null;
-            $quantite = $request->data->quantite ?? null;
-            $prixUnitaire = $request->data->prixUnitaire ?? null;
+            $idVille = (int)($request->data->idVille ?? 0);
+            $valBesoin = trim($request->data->valBesoin ?? '');
+            $idType = (int)($request->data->idType ?? 0);
+            $idProduit = (int)($request->data->idProduit ?? 0);
+            $dateBesoin = $request->data->dateBesoin ?? '';
+            $quantite = (float)($request->data->quantite ?? 0);
+            $prixUnitaire = (float)($request->data->prixUnitaire ?? 0);
 
-            if (!$idVille || !$valBesoin || !$idType || !$idProduit || !$dateBesoin || $quantite === null || $prixUnitaire === null) {
+            // Validations
+            if (!$idVille || !$valBesoin || !$idType || !$idProduit || !$dateBesoin) {
                 $app->redirect('/?error=' . urlencode('Tous les champs sont requis'));
                 return;
             }
 
-            if ((float)$quantite <= 0) {
+            if ($quantite <= 0) {
                 $app->redirect('/?error=' . urlencode('La quantité doit être positive'));
                 return;
             }
 
-            if ((float)$prixUnitaire < 0) {
+            if ($prixUnitaire < 0) {
                 $app->redirect('/?error=' . urlencode('Le prix ne peut pas être négatif'));
                 return;
             }
@@ -612,25 +891,30 @@ $router->group('', function(Router $router) use ($app) {
             $controllerBesoin = new ControllerBesoin();
             $idBesoin = $controllerBesoin->createBesoin($besoin);
             
+            if (!$idBesoin) {
+                throw new \Exception('Erreur lors de la création du besoin');
+            }
+            
             // Lier le produit au besoin
-            $produitBesoin = new ProduitBesoin();
+            $produitBesoin = new \app\models\ProduitBesoin();
             $produitBesoin->setIdProduit($idProduit);
             $produitBesoin->setIdBesoin($idBesoin);
             
             $controllerProduitBesoin = new ControllerProduitBesoin();
             $controllerProduitBesoin->createProduitBesoin($produitBesoin);
             
-            // Créer ou mettre à jour l'équivalence produit avec la quantité demandée et le prix
-            $equivalenceProduit = new EquivalenceProduit();
+            // Créer l'équivalence produit avec la quantité demandée et le prix
+            $equivalenceProduit = new \app\models\EquivalenceProduit();
             $equivalenceProduit->setIdProduit($idProduit);
-            $equivalenceProduit->setQuantite((float)$quantite);
-            $equivalenceProduit->setPrix((float)$prixUnitaire);
+            $equivalenceProduit->setQuantite($quantite);
+            $equivalenceProduit->setPrix($prixUnitaire);
             
             $controllerEquivalenceProduit = new ControllerEquivalenceProduit();
             $controllerEquivalenceProduit->createEquivalenceProduit($equivalenceProduit);
             
             $app->redirect('/?success=1');
         } catch (\Exception $e) {
+            error_log('Erreur besoinInsert: ' . $e->getMessage());
             $app->redirect('/?error=' . urlencode('Erreur: ' . $e->getMessage()));
         }
     });
@@ -639,14 +923,14 @@ $router->group('', function(Router $router) use ($app) {
     $router->get('/produitInsert', function() use ($app) {
         $controllerProduit = new ControllerProduit();
         $produits = $controllerProduit->getAllProduit();
-        $app->render('produitInsert', ['produits' => $produits]);
+        $app->render('crud/produitInsert', ['produits' => $produits]);
     });
 
     // Routes pour Type
     $router->get('/typeInsert', function() use ($app) {
         $controllerType = new ControllerType();
         $types = $controllerType->getAllTypes();
-        $app->render('typeInsert', ['types' => $types]);
+        $app->render('crud/typeInsert', ['types' => $types]);
     });
 
     $router->post('/typeInsert', function() use ($app) {
@@ -707,7 +991,7 @@ $router->group('', function(Router $router) use ($app) {
         $produits = $controllerProduit->getAllProduit();
         $besoins = $controllerBesoin->getAllBesoin();
         
-        $app->render('produitBesoinInsert', ['produits' => $produits, 'besoins' => $besoins]);
+        $app->render('crud/produitBesoinInsert', ['produits' => $produits, 'besoins' => $besoins]);
     });
 
     $router->post('/produitBesoinInsert', function() use ($app) {
@@ -744,7 +1028,7 @@ $router->group('', function(Router $router) use ($app) {
         $produits = $controllerProduit->getAllProduit();
         $equivalences = $controllerEquivalence->getAllEquivalenceProduit();
         
-        $app->render('equivalenceProduitInsert', ['produits' => $produits, 'equivalences' => $equivalences]);
+        $app->render('crud/equivalenceProduitInsert', ['produits' => $produits, 'equivalences' => $equivalences]);
     });
 
     $router->post('/equivalenceProduitInsert', function() use ($app) {
@@ -788,14 +1072,56 @@ $router->group('', function(Router $router) use ($app) {
         
         $besoins = $controllerBesoin->getAllBesoin();
         $produits = $controllerProduit->getAllProduit();
-        $fraisAchat = $controllerConfig->getFraisAchatPourcentage();
-        $achatsSimulation = $controllerAchat->getAchatsSimulation();
+        $fraisAchat = $controllerConfig->getFraisAchatPourcentage() ?? 10;
+        $achatsSimulation = $controllerAchat->getAchatsSimulation() ?? [];
         
-        $app->render('achat', [
-            'besoins' => $besoins,
-            'produits' => $produits,
+        // Formater les besoins
+        $besoinsList = [];
+        foreach ($besoins as $besoin) {
+            $besoinsList[] = [
+                'id' => is_object($besoin) ? $besoin->getIdBesoin() : ($besoin['idBesoin'] ?? null),
+                'val' => is_object($besoin) ? $besoin->getValBesoin() : ($besoin['valBesoin'] ?? '')
+            ];
+        }
+        
+        // Formater les produits
+        $produitsList = [];
+        foreach ($produits as $produit) {
+            $produitsList[] = [
+                'id' => is_object($produit) ? $produit->getIdProduit() : ($produit['idProduit'] ?? null),
+                'name' => is_object($produit) ? $produit->getValProduit() : ($produit['valProduit'] ?? ''),
+                'prix' => is_object($produit) ? $produit->getPrixUnitaire() : ($produit['prixUnitaire'] ?? 0)
+            ];
+        }
+        
+        // Formater les achats en simulation
+        $achatsSimulationList = [];
+        foreach ($achatsSimulation as $achat) {
+            $idProduit = is_object($achat) ? $achat->getIdProduit() : ($achat['idProduit'] ?? null);
+            
+            // Trouver le nom du produit
+            $produitName = 'N/A';
+            foreach ($produits as $produit) {
+                $prodId = is_object($produit) ? $produit->getIdProduit() : ($produit['idProduit'] ?? null);
+                if ($prodId == $idProduit) {
+                    $produitName = is_object($produit) ? $produit->getValProduit() : ($produit['valProduit'] ?? '');
+                    break;
+                }
+            }
+            
+            $achatsSimulationList[] = [
+                'idBesoin' => is_object($achat) ? $achat->getIdBesoin() : ($achat['idBesoin'] ?? null),
+                'produitName' => $produitName,
+                'quantite' => is_object($achat) ? $achat->getQuantiteAchetee() : ($achat['quantiteAchetee'] ?? 0),
+                'montantAvecFrais' => is_object($achat) ? $achat->getMontantAvecFrais() : ($achat['montantAvecFrais'] ?? 0)
+            ];
+        }
+
+        $app->render('purchase/achat', [
+            'besoinsList' => $besoinsList,
+            'produitsList' => $produitsList,
             'fraisAchat' => $fraisAchat,
-            'achatsSimulation' => $achatsSimulation
+            'achatsSimulationList' => $achatsSimulationList
         ]);
     });
 
@@ -850,24 +1176,39 @@ $router->group('', function(Router $router) use ($app) {
     // Page de simulation - voir et valider/rejeter les achats
     $router->get('/simulation', function() use ($app) {
         $controllerAchat = new ControllerAchat();
-        $controllerBesoin = new ControllerBesoin();
         $controllerProduit = new ControllerProduit();
         
-        $achatsSimulation = $controllerAchat->getAchatsSimulation();
-        $besoins = $controllerBesoin->getAllBesoin();
-        $produits = $controllerProduit->getAllProduit();
+        $achatsSimulation = $controllerAchat->getAchatsSimulation() ?? [];
+        $produits = $controllerProduit->getAllProduit() ?? [];
         
-        // Calculer le total des achats en simulation
-        $totalAchat = 0;
+        // Formater les achats en simulation avec données pré-calculées
+        $achatsSimulationList = [];
         foreach ($achatsSimulation as $achat) {
-            $totalAchat += floatval($achat->getMontantAvecFrais());
+            $idProduit = is_object($achat) ? $achat->getIdProduit() : ($achat['idProduit'] ?? null);
+            
+            // Trouver le nom du produit
+            $produitName = 'N/A';
+            foreach ($produits as $produit) {
+                $prodId = is_object($produit) ? $produit->getIdProduit() : ($produit['idProduit'] ?? null);
+                if ($prodId == $idProduit) {
+                    $produitName = is_object($produit) ? $produit->getValProduit() : ($produit['valProduit'] ?? '');
+                    break;
+                }
+            }
+            
+            $achatsSimulationList[] = [
+                'idBesoin' => is_object($achat) ? $achat->getIdBesoin() : ($achat['idBesoin'] ?? null),
+                'produitName' => $produitName,
+                'quantite' => is_object($achat) ? $achat->getQuantiteAchetee() : ($achat['quantiteAchetee'] ?? 0),
+                'prixUnitaire' => is_object($achat) ? $achat->getPrixUnitaire() : ($achat['prixUnitaire'] ?? 0),
+                'montantTotal' => is_object($achat) ? $achat->getMontantTotal() : ($achat['montantTotal'] ?? 0),
+                'montantFrais' => is_object($achat) ? $achat->getMontantFrais() : ($achat['montantFrais'] ?? 0),
+                'montantAvecFrais' => is_object($achat) ? $achat->getMontantAvecFrais() : ($achat['montantAvecFrais'] ?? 0)
+            ];
         }
-        
-        $app->render('simulation', [
-            'achatsSimulation' => $achatsSimulation,
-            'besoins' => $besoins,
-            'produits' => $produits,
-            'totalAchat' => $totalAchat
+
+        $app->render('purchase/simulation', [
+            'achatsSimulationList' => $achatsSimulationList
         ]);
     });
 
@@ -933,7 +1274,7 @@ $router->group('', function(Router $router) use ($app) {
         $stats['montantRestant'] = $stats['totalBesoins'] - $stats['montantTotal'];
         if ($stats['montantRestant'] < 0) $stats['montantRestant'] = 0;
         
-        $app->render('recapitulation', [
+        $app->render('display/recapitulation', [
             'stats' => $stats,
             'achatsValides' => $achatsValides,
             'besoins' => $besoins,

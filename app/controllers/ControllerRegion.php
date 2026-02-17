@@ -7,8 +7,8 @@ use app\repository\RepRegion;
 class ControllerRegion {
     private RepRegion $regionRepo;
 
-    public function __construct(RepRegion $regionRepo) {
-        $this->regionRepo = $regionRepo;
+    public function __construct() {
+        $this->regionRepo = new RepRegion();
     }
 
     public function addRegion(Region $region): void {

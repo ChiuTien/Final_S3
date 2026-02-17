@@ -1,7 +1,7 @@
 <?php
 // Vue serveur pour la liste des villes
 // Toutes les données sont préparées dans routes.php
-include __DIR__ . '/includes/header.php';
+include __DIR__ . '/../includes/header.php';
 ?>
 
 <div class="container">
@@ -40,4 +40,4 @@ include __DIR__ . '/includes/header.php';
 
 </div>
 
-<?php include __DIR__ . '/includes/footer.php'; ?>
+<?php include __DIR__ . '/../includes/footer.php'; ?>
