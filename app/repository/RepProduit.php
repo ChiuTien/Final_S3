@@ -65,6 +65,7 @@ class RepProduit
                 $produit->setIdProduit($row['idProduit']);
                 $produit->setValProduit($row['valProduit']);
                 $produit->setIdType($row['idType']);
+                $produit->setPrixUnitaire($row['prixUnitaire'] ?? 0);
                 $produits[] = $produit;
             }
         } catch (\Throwable $th) {
@@ -88,6 +89,7 @@ class RepProduit
                 $produit->setIdProduit($row['idProduit']);
                 $produit->setValProduit($row['valProduit']);
                 $produit->setIdType($row['idType']);
+                $produit->setPrixUnitaire($row['prixUnitaire'] ?? 0);
             }
         } catch (\Throwable $th) {
             throw $th;
