@@ -12,9 +12,11 @@ use app\controllers\ControllerDispatchMere;
 use app\controllers\ControllerDispatchFille;
 use app\controllers\ControllerProduit;
 use app\controllers\ControllerProduitBesoin;
+use app\controllers\ControllerAchat;
+use app\controllers\ControllerConfig;
 use app\models\Don;
 use app\models\Donnation;
-use app\models\DispatchFille;
+use app\models\Achat;
 
 /** 
  * @var Router $router 
@@ -503,6 +505,169 @@ $router->group('', function(Router $router) use ($app) {
             $app->redirect('/equivalenceProduitInsert');
         }
     });
+
+    // ========== V2 ROUTES ==========
+    
+    // Page d'achat - acheter des produits avec les dons en argent
+    $router->get('/achat', function() use ($app) {
+        $controllerBesoin = new ControllerBesoin();
+        $controllerProduit = new ControllerProduit();
+        $controllerConfig = new ControllerConfig();
+        $controllerAchat = new ControllerAchat();
         
+        $besoins = $controllerBesoin->getAllBesoin();
+        $produits = $controllerProduit->getAllProduit();
+        $fraisAchat = $controllerConfig->getFraisAchatPourcentage();
+        $achatsSimulation = $controllerAchat->getAchatsSimulation();
+        
+        $app->render('achat', [
+            'besoins' => $besoins,
+            'produits' => $produits,
+            'fraisAchat' => $fraisAchat,
+            'achatsSimulation' => $achatsSimulation
+        ]);
+    });
+
+    // POST pour ajouter un achat en simulation
+    $router->post('/achat/acheter', function() use ($app) {
+        try {
+            $request = $app->request();
+            $idBesoin = $request->data->idBesoin ?? null;
+            $idProduit = $request->data->idProduit ?? null;
+            $quantite = $request->data->quantite ?? null;
+            
+            if (!$idBesoin || !$idProduit || !$quantite || $quantite <= 0) {
+                $app->redirect('/achat');
+                return;
+            }
+            
+            $controllerProduit = new ControllerProduit();
+            $produit = $controllerProduit->getProduitById($idProduit);
+            
+            if (!$produit || !$produit->getPrixUnitaire()) {
+                $app->redirect('/achat');
+                return;
+            }
+            
+            $controllerConfig = new ControllerConfig();
+            $frais = $controllerConfig->getFraisAchatPourcentage();
+            
+            // Calcul: montant = quantité * prix unitaire
+            $montantTotal = floatval($quantite) * floatval($produit->getPrixUnitaire());
+            $montantFrais = $montantTotal * ($frais / 100);
+            $montantAvecFrais = $montantTotal + $montantFrais;
+            
+            $achat = new Achat();
+            $achat->setIdBesoin($idBesoin);
+            $achat->setIdProduit($idProduit);
+            $achat->setQuantiteAchetee($quantite);
+            $achat->setPrixUnitaire($produit->getPrixUnitaire());
+            $achat->setMontantTotal($montantTotal);
+            $achat->setMontantFrais($montantFrais);
+            $achat->setMontantAvecFrais($montantAvecFrais);
+            $achat->setStatut('simulation');
+            
+            $controllerAchat = new ControllerAchat();
+            $controllerAchat->addAchat($achat);
+            
+            $app->redirect('/achat');
+        } catch (\Exception $e) {
+            $app->redirect('/achat');
+        }
+    });
+
+    // Page de simulation - voir et valider/rejeter les achats
+    $router->get('/simulation', function() use ($app) {
+        $controllerAchat = new ControllerAchat();
+        $controllerBesoin = new ControllerBesoin();
+        $controllerProduit = new ControllerProduit();
+        
+        $achatsSimulation = $controllerAchat->getAchatsSimulation();
+        $besoins = $controllerBesoin->getAllBesoin();
+        $produits = $controllerProduit->getAllProduit();
+        
+        // Calculer le total des achats en simulation
+        $totalAchat = 0;
+        foreach ($achatsSimulation as $achat) {
+            $totalAchat += floatval($achat->getMontantAvecFrais());
+        }
+        
+        $app->render('simulation', [
+            'achatsSimulation' => $achatsSimulation,
+            'besoins' => $besoins,
+            'produits' => $produits,
+            'totalAchat' => $totalAchat
+        ]);
+    });
+
+    // POST pour valider tous les achats en simulation
+    $router->post('/simulation/valider', function() use ($app) {
+        try {
+            $controllerAchat = new ControllerAchat();
+            $achatsSimulation = $controllerAchat->getAchatsSimulation();
+            
+            foreach ($achatsSimulation as $achat) {
+                $controllerAchat->updateStatutAchat($achat->getIdAchat(), 'validé');
+            }
+            
+            $app->redirect('/recapitulation');
+        } catch (\Exception $e) {
+            $app->redirect('/simulation');
+        }
+    });
+
+    // POST pour rejeter tous les achats en simulation
+    $router->post('/simulation/rejeter', function() use ($app) {
+        try {
+            $controllerAchat = new ControllerAchat();
+            $achatsSimulation = $controllerAchat->getAchatsSimulation();
+            
+            foreach ($achatsSimulation as $achat) {
+                $controllerAchat->deleteAchat($achat->getIdAchat());
+            }
+            
+            $app->redirect('/achat');
+        } catch (\Exception $e) {
+            $app->redirect('/simulation');
+        }
+    });
+
+    // Page de récapitulation - afficher les stats d'achat
+    $router->get('/recapitulation', function() use ($app) {
+        $controllerAchat = new ControllerAchat();
+        $controllerBesoin = new ControllerBesoin();
+        $controllerProduit = new ControllerProduit();
+        
+        $achatsValides = $controllerAchat->getAchatsValides();
+        $besoins = $controllerBesoin->getAllBesoin();
+        $produits = $controllerProduit->getAllProduit();
+        
+        // Calculer les stats
+        $stats = [
+            'totalBesoins' => 0,
+            'besoinsSatisfaits' => 0,
+            'montantTotal' => 0,
+            'montantRestant' => 0
+        ];
+        
+        foreach ($besoins as $besoin) {
+            $montantBesoin = floatval($besoin->getValBesoin() ?? 0);
+            $stats['totalBesoins'] += $montantBesoin;
+        }
+        
+        foreach ($achatsValides as $achat) {
+            $stats['montantTotal'] += floatval($achat->getMontantAvecFrais());
+        }
+        
+        $stats['montantRestant'] = $stats['totalBesoins'] - $stats['montantTotal'];
+        if ($stats['montantRestant'] < 0) $stats['montantRestant'] = 0;
+        
+        $app->render('recapitulation', [
+            'stats' => $stats,
+            'achatsValides' => $achatsValides,
+            'besoins' => $besoins,
+            'produits' => $produits
+        ]);
+    });
 
 }, [ SecurityHeadersMiddleware::class ]);
