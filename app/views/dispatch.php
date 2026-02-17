@@ -1,13 +1,7 @@
 <?php
-use app\controllers\ControllerDispatchMere;
-use app\controllers\ControllerVille;
-
+// Vue pour la gestion des Dispatch Mère
+// Toutes les données sont préparées dans routes.php
 include __DIR__ . '/includes/header.php';
-
-$controllerDispatchMere = new ControllerDispatchMere();
-$controllerVille = new ControllerVille();
-
-$meres = $controllerDispatchMere->getAllDispatchMeres();
 ?>
 
 <div class="container">
@@ -30,8 +24,8 @@ $meres = $controllerDispatchMere->getAllDispatchMeres();
                         </tr>
                     </thead>
                     <tbody>
-                        <?php if (!empty($meres)): ?>
-                            <?php foreach ($meres as $mere): ?>
+                        <?php if (!empty($dispatchMeres)): ?>
+                            <?php foreach ($dispatchMeres as $mere): ?>
                                 <?php 
                                     $villeData = $controllerVille->getVilleById(isset($mere['id_ville']) ? $mere['id_ville'] : null);
                                     $villeName = is_object($villeData) ? $villeData->getValVille() : (isset($villeData['val_ville']) ? $villeData['val_ville'] : 'Non définie');

@@ -27,6 +27,10 @@
         public function deleteEquivalenceDate($id) {
             return $this->repEquivalenceDate->supprimerEquivalenceDate($id);
         }
+
+        public function getEquivalenceDateByIdBesoin($id) : array {
+            return $this->repEquivalenceDate->getEquivalenceDateByIdBesoin($id);
+        }
     }
 
 ?>

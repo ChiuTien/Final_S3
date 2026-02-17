@@ -1,10 +1,7 @@
 <?php
-
-use app\controllers\ControllerVille;
-// Vue serveur pour la liste des villes — utilise les controllers si disponibles, sinon données de test
+// Vue serveur pour la liste des villes
+// Toutes les données sont préparées dans routes.php
 include __DIR__ . '/includes/header.php';
-$controllerVille = new ControllerVille();
-$villes = $controllerVille->getAllVilles();
 ?>
 
 <div class="container">

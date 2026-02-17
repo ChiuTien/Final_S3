@@ -27,6 +27,10 @@
         public function deleteEquivalenceProduit($id) {
             return $this->repEquivalenceProduit->supprimerEquivalenceProduit($id);
         }
+
+        public function getSumPriceByIdProduit(int $idProduit): float {
+            return $this->repEquivalenceProduit->getSumPriceByIdProduit($idProduit);
+        }
     }
 
 ?>
