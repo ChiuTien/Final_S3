@@ -8,9 +8,6 @@ if (!$mere) {
     include __DIR__ . '/includes/footer.php';
     exit;
 }
-
-$villeData = $controllerVille->getVilleById($mere->getIdVille());
-$villeName = is_object($villeData) ? $villeData->getValVille() : (isset($villeData['val_ville']) ? $villeData['val_ville'] : 'Non définie');
 ?>
 
 <div class="container">
@@ -57,13 +54,9 @@ $villeName = is_object($villeData) ? $villeData->getValVille() : (isset($villeDa
                             <tbody>
                                 <?php if (!empty($filles)): ?>
                                     <?php foreach ($filles as $fille): ?>
-                                        <?php 
-                                            $produitData = $controllerProduit->getProduitById(isset($fille['id_produit']) ? $fille['id_produit'] : null);
-                                            $produitName = is_object($produitData) ? $produitData->getValProduit() : (isset($produitData['val_produit']) ? $produitData['val_produit'] : 'Non défini');
-                                        ?>
                                         <tr>
-                                            <td><?= htmlspecialchars($produitName) ?></td>
-                                            <td><?= isset($fille['quantite']) ? htmlspecialchars($fille['quantite']) : '' ?></td>
+                                            <td><?= htmlspecialchars($fille['produitName']) ?></td>
+                                            <td><?= htmlspecialchars($fille['quantite']) ?></td>
                                         </tr>
                                     <?php endforeach; ?>
                                 <?php else: ?>
@@ -85,12 +78,11 @@ $villeName = is_object($villeData) ? $villeData->getValVille() : (isset($villeDa
                                     <label for="idProduit"><i class="fas fa-box"></i> Produit</label>
                                     <select class="form-control form-control-sm" id="idProduit" name="idProduit" required>
                                         <option value="">-- Sélectionner un produit --</option>
-                                        <?php 
-                                            $produits = $controllerProduit->getAllProduit();
-                                            foreach ($produits as $produit):
+                                        <?php foreach ($produits as $produit): ?>
+                                            <?php
                                                 $prodId = is_object($produit) ? $produit->getIdProduit() : ($produit['id_produit'] ?? '');
                                                 $prodVal = is_object($produit) ? $produit->getValProduit() : ($produit['val_produit'] ?? '');
-                                        ?>
+                                            ?>
                                             <option value="<?= htmlspecialchars($prodId) ?>">
                                                 <?= htmlspecialchars($prodVal) ?>
                                             </option>

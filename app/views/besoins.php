@@ -22,29 +22,10 @@ include __DIR__ . '/includes/header.php';
                     </thead>
                     <tbody>
                         <?php foreach ($besoins as $b): ?>
-                            <?php
-                                if (!is_object($b) && !is_array($b)) {
-                                    continue;
-                                }
-
-                                $valBesoin = is_object($b) ? $b->getValBesoin() : ($b['valBesoin'] ?? '');
-                                $idVille = is_object($b) ? $b->getIdVille() : ($b['idVille'] ?? null);
-                                $idType = is_object($b) ? $b->getIdType() : ($b['idType'] ?? null);
-
-                                $villeData = $idVille ? $ctrlVille->getVilleById($idVille) : null;
-                                $villeName = is_object($villeData)
-                                    ? $villeData->getValVille()
-                                    : (is_array($villeData) ? ($villeData['valVille'] ?? '') : '');
-
-                                $typeData = $idType ? $ctrlType->getTypeById($idType) : null;
-                                $typeName = is_object($typeData)
-                                    ? $typeData->getValType()
-                                    : (is_array($typeData) ? ($typeData['valType'] ?? '') : '');
-                            ?>
                             <tr>
-                                <td><?= htmlspecialchars($valBesoin ?: 'N/A') ?></td>
-                                <td><?= htmlspecialchars($villeName ?: 'N/A') ?></td>
-                                <td><?= htmlspecialchars($typeName ?: 'N/A') ?></td>
+                                <td><?= htmlspecialchars($b['valBesoin'] ?? 'N/A') ?></td>
+                                <td><?= htmlspecialchars($b['villeName'] ?? 'N/A') ?></td>
+                                <td><?= htmlspecialchars($b['typeName'] ?? 'N/A') ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>

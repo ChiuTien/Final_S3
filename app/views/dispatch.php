@@ -26,16 +26,12 @@ include __DIR__ . '/includes/header.php';
                     <tbody>
                         <?php if (!empty($dispatchMeres)): ?>
                             <?php foreach ($dispatchMeres as $mere): ?>
-                                <?php 
-                                    $villeData = $controllerVille->getVilleById(isset($mere['id_ville']) ? $mere['id_ville'] : null);
-                                    $villeName = is_object($villeData) ? $villeData->getValVille() : (isset($villeData['val_ville']) ? $villeData['val_ville'] : 'Non définie');
-                                ?>
-                                <tr style="cursor: pointer;" onclick="window.location.href = '<?= BASE_URL ?>/dispatchDetail?id=<?= isset($mere['id_Dispatch_mere']) ? htmlspecialchars($mere['id_Dispatch_mere']) : '' ?>'">
-                                    <td><?= isset($mere['id_Dispatch_mere']) ? htmlspecialchars($mere['id_Dispatch_mere']) : '' ?></td>
-                                    <td><?= htmlspecialchars($villeName) ?></td>
-                                    <td><?= isset($mere['date_dispatch']) ? htmlspecialchars($mere['date_dispatch']) : '' ?></td>
+                                <tr style="cursor: pointer;" onclick="window.location.href = '<?= BASE_URL ?>/dispatchDetail?id=<?= htmlspecialchars($mere['id_Dispatch_mere']) ?>'">
+                                    <td><?= htmlspecialchars($mere['id_Dispatch_mere']) ?></td>
+                                    <td><?= htmlspecialchars($mere['villeName']) ?></td>
+                                    <td><?= htmlspecialchars($mere['date_dispatch']) ?></td>
                                     <td>
-                                        <a href="<?= BASE_URL ?>/dispatchDetail?id=<?= isset($mere['id_Dispatch_mere']) ? htmlspecialchars($mere['id_Dispatch_mere']) : '' ?>" class="btn btn-sm btn-info">
+                                        <a href="<?= BASE_URL ?>/dispatchDetail?id=<?= htmlspecialchars($mere['id_Dispatch_mere']) ?>" class="btn btn-sm btn-info">
                                             <i class="fas fa-eye"></i> Voir détails
                                         </a>
                                     </td>

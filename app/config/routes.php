@@ -44,14 +44,20 @@ $router->group('', function(Router $router) use ($app) {
         $types = $controllerType->getAllTypes();
         $produits = $controllerProduit->getAllProduit();
         
+        // Récupérer les statistiques (pas les contrôleurs)
+        $nombreVilles = $controllerVille->getNombreVille();
+        $nombreBesoins = $controllerBesoin->getNombreBesoin();
+        $nombreDons = $controllerDon->getNombreDons();
+        $nombreDispatchMeres = $controllerDispatchMere->getNombreDispatchMeres();
+        
         $app->render('welcome', [
-            'controllerVille' => $controllerVille, 
-            'controllerBesoin' => $controllerBesoin, 
-            'controllerDispatchMere' => $controllerDispatchMere, 
-            'controllerDon' => $controllerDon,
             'villes' => $villes,
             'types' => $types,
-            'produits' => $produits
+            'produits' => $produits,
+            'nombreVilles' => $nombreVilles,
+            'nombreBesoins' => $nombreBesoins,
+            'nombreDons' => $nombreDons,
+            'nombreDispatchMeres' => $nombreDispatchMeres
         ]);
     });
 
@@ -78,10 +84,39 @@ $router->group('', function(Router $router) use ($app) {
         $ctrlType = new ControllerType();
         $besoins = $ctrl->getAllBesoin();
 
+        // Enrichir les besoins avec les noms de villes et types
+        $besoinsEnrichis = [];
+        foreach ($besoins as $b) {
+            $besoinData = [];
+            $besoinData['valBesoin'] = is_object($b) ? $b->getValBesoin() : ($b['valBesoin'] ?? '');
+            $besoinData['idVille'] = is_object($b) ? $b->getIdVille() : ($b['idVille'] ?? null);
+            $besoinData['idType'] = is_object($b) ? $b->getIdType() : ($b['idType'] ?? null);
+            
+            // Récupérer le nom de la ville
+            if ($besoinData['idVille']) {
+                $villeData = $ctrlVille->getVilleById($besoinData['idVille']);
+                $besoinData['villeName'] = is_object($villeData) 
+                    ? $villeData->getValVille() 
+                    : (is_array($villeData) ? ($villeData['valVille'] ?? '') : '');
+            } else {
+                $besoinData['villeName'] = '';
+            }
+            
+            // Récupérer le nom du type
+            if ($besoinData['idType']) {
+                $typeData = $ctrlType->getTypeById($besoinData['idType']);
+                $besoinData['typeName'] = is_object($typeData) 
+                    ? $typeData->getValType() 
+                    : (is_array($typeData) ? ($typeData['valType'] ?? '') : '');
+            } else {
+                $besoinData['typeName'] = '';
+            }
+            
+            $besoinsEnrichis[] = $besoinData;
+        }
+
         $app->render('besoins', [
-            'besoins' => $besoins,
-            'ctrlVille' => $ctrlVille,
-            'ctrlType' => $ctrlType
+            'besoins' => $besoinsEnrichis
         ]);
     });
 
@@ -97,13 +132,30 @@ $router->group('', function(Router $router) use ($app) {
         $villes = $controllerVille->getAllVilles();
         $dispatchMeres = $controllerDispatchMere->getAllDispatchMeres();
 
+        // Enrichir les dispatch mères avec les noms de villes
+        $dispatchMeresEnrichis = [];
+        foreach ($dispatchMeres as $mere) {
+            $mereData = [];
+            $mereData['id_Dispatch_mere'] = $mere['id_Dispatch_mere'] ?? '';
+            $mereData['id_ville'] = $mere['id_ville'] ?? null;
+            $mereData['date_dispatch'] = $mere['date_dispatch'] ?? '';
+            
+            // Récupérer le nom de la ville
+            if ($mereData['id_ville']) {
+                $villeData = $controllerVille->getVilleById($mereData['id_ville']);
+                $mereData['villeName'] = is_object($villeData) 
+                    ? $villeData->getValVille() 
+                    : (isset($villeData['val_ville']) ? $villeData['val_ville'] : 'Non définie');
+            } else {
+                $mereData['villeName'] = 'Non définie';
+            }
+            
+            $dispatchMeresEnrichis[] = $mereData;
+        }
+
         $app->render('dispatch', [
             'villes' => $villes,
-            'dispatchMeres' => $dispatchMeres,
-            'controllerVille' => $controllerVille,
-            'controllerEquivalence' => $controllerEquivalence,
-            'controllerDonnation' => $controllerDonnation,
-            'controllerEquivalenceProduit' => $controllerEquivalenceProduit
+            'dispatchMeres' => $dispatchMeresEnrichis
         ]);
     });
 
@@ -123,15 +175,38 @@ $router->group('', function(Router $router) use ($app) {
 
         $mere = $controllerDispatchMere->getDispatchMereById($idDispatchMere);
         $filles = $controllerDispatchFille->getFillesByMere($idDispatchMere);
+        $produits = $controllerProduit->getAllProduit();
+
+        // Récupérer les informations de la ville
+        $villeData = $controllerVille->getVilleById($mere->getIdVille());
+        $villeName = is_object($villeData) ? $villeData->getValVille() : (isset($villeData['val_ville']) ? $villeData['val_ville'] : 'Non définie');
+
+        // Enrichir les filles avec les noms de produits
+        $fillesEnrichies = [];
+        foreach ($filles as $fille) {
+            $filleData = [];
+            $filleData['id_produit'] = $fille['id_produit'] ?? null;
+            $filleData['quantite'] = $fille['quantite'] ?? '';
+            
+            // Récupérer le nom du produit
+            if ($filleData['id_produit']) {
+                $produitData = $controllerProduit->getProduitById($filleData['id_produit']);
+                $filleData['produitName'] = is_object($produitData) 
+                    ? $produitData->getValProduit() 
+                    : (isset($produitData['val_produit']) ? $produitData['val_produit'] : 'Non défini');
+            } else {
+                $filleData['produitName'] = 'Non défini';
+            }
+            
+            $fillesEnrichies[] = $filleData;
+        }
 
         $app->render('dispatchDetail', [
             'mereId' => $idDispatchMere,
             'mere' => $mere,
-            'filles' => $filles,
-            'controllerDispatchMere' => $controllerDispatchMere,
-            'controllerDispatchFille' => $controllerDispatchFille,
-            'controllerVille' => $controllerVille,
-            'controllerProduit' => $controllerProduit
+            'villeName' => $villeName,
+            'filles' => $fillesEnrichies,
+            'produits' => $produits
         ]);
     });
 
