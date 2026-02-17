@@ -18,7 +18,8 @@ class RepHistoriqueDispatch {
             $stmt = $this->db->prepare($sql);
             $stmt->bindValue(':idVille', $h->getIdVille(), PDO::PARAM_INT);
             $stmt->bindValue(':idBesoin', $h->getIdBesoin(), PDO::PARAM_INT);
-            $stmt->bindValue(':date_change', $h->getDateChange(), PDO::PARAM_STR);
+            $dateVal = $h->getDateChange() instanceof \DateTime ? $h->getDateChange()->format('Y-m-d') : $h->getDateChange();
+            $stmt->bindValue(':date_change', $dateVal, PDO::PARAM_STR);
             $stmt->bindValue(':status', $h->getStatus(), PDO::PARAM_STR);
             $stmt->execute();
         } catch (\Throwable $th) {
@@ -43,7 +44,8 @@ class RepHistoriqueDispatch {
             $stmt = $this->db->prepare($sql);
             $stmt->bindValue(':idVille', $h->getIdVille(), PDO::PARAM_INT);
             $stmt->bindValue(':idBesoin', $h->getIdBesoin(), PDO::PARAM_INT);
-            $stmt->bindValue(':date_change', $h->getDateChange(), PDO::PARAM_STR);
+            $dateVal = $h->getDateChange() instanceof \DateTime ? $h->getDateChange()->format('Y-m-d') : $h->getDateChange();
+            $stmt->bindValue(':date_change', $dateVal, PDO::PARAM_STR);
             $stmt->bindValue(':status', $h->getStatus(), PDO::PARAM_STR);
             $stmt->bindValue(':idHistorique', $h->getIdHistorique(), PDO::PARAM_INT);
             $stmt->execute();
@@ -62,7 +64,7 @@ class RepHistoriqueDispatch {
                 $h->setIdHistorique($row['idHistorique']);
                 $h->setIdVille($row['idVille']);
                 $h->setIdBesoin($row['idBesoin']);
-                $h->setDateChange($row['date_change']);
+                $h->setDateChange(isset($row['date_change']) ? new \DateTime($row['date_change']) : null);
                 $h->setStatus($row['status']);
                 $items[] = $h;
             }
@@ -84,7 +86,7 @@ class RepHistoriqueDispatch {
                 $h->setIdHistorique($row['idHistorique']);
                 $h->setIdVille($row['idVille']);
                 $h->setIdBesoin($row['idBesoin']);
-                $h->setDateChange($row['date_change']);
+                $h->setDateChange(isset($row['date_change']) ? new \DateTime($row['date_change']) : null);
                 $h->setStatus($row['status']);
             }
         } catch (\Throwable $th) {
