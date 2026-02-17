@@ -217,9 +217,11 @@ $router->group('', function(Router $router) use ($app) {
 		$controllerVille = new ControllerVille();
 	    $controllerBesoin = new ControllerBesoin();
         $controllerDon = new ControllerDon();
+        $controllerType = new ControllerType();
         $controllerDispatchMere = new ControllerDispatchMere();
         $app->render('welcome', ['controllerVille' => $controllerVille, 'controllerBesoin' => $controllerBesoin,
-        'controllerDon' => $controllerDon, 'controllerDispatchMere' => $controllerDispatchMere]);
+        'controllerDon' => $controllerDon, 'controllerType' => $controllerType, 'controllerDispatchMere' => $controllerDispatchMere,
+        ]);
     });
 
     // Route pour l'affichage des dons

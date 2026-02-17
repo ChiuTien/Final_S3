@@ -1,10 +1,7 @@
 <!-- Inclusion du header -->
 <?php
-use app\controllers\ControllerType;
-
 include __DIR__ . '/includes/header.php';
 
-$controllerType = new ControllerType();
 $besoins = $controllerBesoin->getAllBesoin();
 $villes = $controllerVille->getAllVilles();
 $types = $controllerType->getAllTypes();
