@@ -4,6 +4,7 @@ namespace app\controllers;
 use app\models\Type;
 use app\repository\RepType;
 
+
 class ControllerType {
     private RepType $typeRepo;
 
