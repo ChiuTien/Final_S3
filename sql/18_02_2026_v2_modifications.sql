@@ -41,3 +41,5 @@ CREATE INDEX idx_achat_besoin ON Achat(idBesoin);
 CREATE INDEX idx_achat_produit ON Achat(idProduit);
 CREATE INDEX idx_achat_statut ON Achat(statut);
 CREATE INDEX idx_produit_prix ON Produit(prixUnitaire);
+
+
