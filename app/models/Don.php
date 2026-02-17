@@ -6,14 +6,8 @@ class Don{
     private \DateTime $dateDon;
     private $totalPrix;
 
-    public function __construct($idDon = null, \DateTime $dateDon = null, $totalPrix = null) {
-        $this->idDon = $idDon;
-        if ($dateDon !== null) {
-            $this->dateDon = $dateDon;
-        } else {
-            $this->dateDon = new \DateTime();
-        }
-        $this->totalPrix = $totalPrix;
+    public function __construct() {
+        $this->dateDon = new \DateTime();
     }
 
     public function getIdDon() :?int {
