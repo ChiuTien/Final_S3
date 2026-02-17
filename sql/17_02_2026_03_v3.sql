@@ -4,10 +4,12 @@ CREATE TABLE OR REPLACE Historique_dispatch (
     idVille INT,
     idBesoin INT,
     date_change DATE,
-    status VARCHAR
+    status VARCHAR(255)
 );
 
 CREATE TABLE OR REPLACE TypeDispatch (
     idTypeDispatch INT PRIMARY KEY AUTO_INCREMENT,
-    nomType VARCHAR
+    nomType VARCHAR(255)
 );
+
+INSERT INTO TypeDispatch (nomType) VALUES ('Date'), ('Proportion'), ('Minimum');
