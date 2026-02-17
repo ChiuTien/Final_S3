@@ -67,7 +67,7 @@
                 throw $th;
             }
         }
-        public function getBesoinById($idBesoin) :?Besoin {
+        public function getBesoinById($idBesoin) :Besoin {
             try {
                 $sql = "SELECT * FROM Besoin WHERE idBesoin = :idBesoin";
                 $stmt = $this->db->prepare($sql);
@@ -75,7 +75,7 @@
                 $stmt->execute();
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
                 if (!$row) {
-                    return null;
+                    throw new \Exception("Besoin non trouvé");
                 }
                 $besoin = new Besoin();
                 $besoin->setIdBesoin($row['idBesoin']);
