@@ -11,8 +11,8 @@ class ControllerDispatchMere {
         $this->repo = new RepDispatchMere();
     }
 
-    public function addDispatchMere(DispatchMere $d): void {
-        $this->repo->addDispatchMere($d);
+    public function addDispatchMere(DispatchMere $d): int {
+        return $this->repo->addDispatchMere($d);
     }
 
     public function removeDispatchMere(DispatchMere $d): void {

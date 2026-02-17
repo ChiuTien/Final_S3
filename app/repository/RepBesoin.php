@@ -13,14 +13,16 @@
             $this->db = Flight::db();
         }
     //Methodes
-        public function ajouterBesoin(Besoin $besoin) :void {
+        public function ajouterBesoin(Besoin $besoin) :int {
             try {
-                $sql = "INSERT INTO Besoin (valBesoin, idType, idVille) VALUES (:valBesoin, :idType, :idVille)";
+                $sql = "INSERT INTO Besoin (valBesoin, idType, idVille, dateBesoin) VALUES (:valBesoin, :idType, :idVille, :dateBesoin)";
                 $stmt = $this->db->prepare($sql);
                 $stmt->bindValue(':valBesoin', $besoin->getValBesoin(), PDO::PARAM_STR);
                 $stmt->bindValue(':idType', $besoin->getIdType(), PDO::PARAM_INT);
                 $stmt->bindValue(':idVille', $besoin->getIdVille(), PDO::PARAM_INT);
+                $stmt->bindValue(':dateBesoin', $besoin->getDateBesoin(), PDO::PARAM_STR);
                 $stmt->execute();
+                return (int) $this->db->lastInsertId();
             } catch(\Throwable $th) {
                 throw $th;
             }
@@ -37,11 +39,12 @@
         }
         public function modifierBesoin(Besoin $besoin) :void {
             try {
-                $sql = "UPDATE Besoin SET valBesoin = :valBesoin, idType = :idType, idVille = :idVille WHERE idBesoin = :idBesoin";
+                $sql = "UPDATE Besoin SET valBesoin = :valBesoin, idType = :idType, idVille = :idVille, dateBesoin = :dateBesoin WHERE idBesoin = :idBesoin";
                 $stmt = $this->db->prepare($sql);
                 $stmt->bindValue(':valBesoin', $besoin->getValBesoin(), PDO::PARAM_STR);
                 $stmt->bindValue(':idType', $besoin->getIdType(), PDO::PARAM_INT);
                 $stmt->bindValue(':idVille', $besoin->getIdVille(), PDO::PARAM_INT);
+                $stmt->bindValue(':dateBesoin', $besoin->getDateBesoin(), PDO::PARAM_STR);
                 $stmt->bindValue(':idBesoin', $besoin->getIdBesoin(), PDO::PARAM_INT);
                 $stmt->execute();
             } catch(\Throwable $th) {
@@ -56,13 +59,11 @@
                 $besoins = [];
                 foreach ($rows as $row) {
                     $besoin = new Besoin();
-                    $besoin->setIdBesoin($row['idBesoin']);
-                    $besoin->setValBesoin($row['valBesoin'] ?? '');
-                    $besoin->setIdType($row['idType'] ?? null);
-                    // idVille est optionnel, peut ne pas exister dans la table
-                    if (isset($row['idVille'])) {
-                        $besoin->setIdVille($row['idVille']);
-                    }
+                    $besoin->setIdBesoin($row['idBesoin'] ?? $row['id_besoin'] ?? null);
+                    $besoin->setValBesoin($row['valBesoin'] ?? $row['val_besoin'] ?? '');
+                    $besoin->setIdType($row['idType'] ?? $row['id_type'] ?? null);
+                    $besoin->setIdVille($row['idVille'] ?? $row['id_ville'] ?? null);
+                    $besoin->setDateBesoin($row['dateBesoin'] ?? $row['date_besoin'] ?? null);
                     $besoins[] = $besoin;
                 }
                 return $besoins;
@@ -81,10 +82,11 @@
                     throw new \Exception("Besoin non trouvé");
                 }
                 $besoin = new Besoin();
-                $besoin->setIdBesoin($row['idBesoin']);
-                $besoin->setValBesoin($row['valBesoin']);
-                $besoin->setIdType($row['idType']);
-                $besoin->setIdVille($row['idVille']);
+                $besoin->setIdBesoin($row['idBesoin'] ?? $row['id_besoin'] ?? null);
+                $besoin->setValBesoin($row['valBesoin'] ?? $row['val_besoin'] ?? '');
+                $besoin->setIdType($row['idType'] ?? $row['id_type'] ?? null);
+                $besoin->setIdVille($row['idVille'] ?? $row['id_ville'] ?? null);
+                $besoin->setDateBesoin($row['dateBesoin'] ?? $row['date_besoin'] ?? null);
                 return $besoin;
             } catch(\Throwable $th) {
                 throw $th;

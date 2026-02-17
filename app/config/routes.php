@@ -17,6 +17,8 @@ use app\controllers\ControllerStockage;
 use app\controllers\ControllerProduitBesoin;
 use app\controllers\ControllerAchat;
 use app\controllers\ControllerConfig;
+use app\models\ProduitBesoin;
+use app\models\EquivalenceProduit;
 use app\models\Don;
 use app\models\Donnation;
 use app\models\Achat;
@@ -227,6 +229,101 @@ $router->group('', function(Router $router) use ($app) {
                 'produitsById' => $produitsById
             ]);
         });
+    
+    // Route pour le dispatch par date
+    $router->get('/dispatchDate', function() use ($app) {
+        $controllerBesoin = new ControllerBesoin();
+        $controllerVille = new ControllerVille();
+        $controllerProduitBesoin = new ControllerProduitBesoin();
+        $controllerProduit = new ControllerProduit();
+        $controllerStockage = new ControllerStockage();
+        $controllerEquivalenceProduit = new ControllerEquivalenceProduit();
+
+        $besoins = $controllerBesoin->getAllBesoin();
+        $produitBesoins = $controllerProduitBesoin->getAllProduitBesoin();
+        
+        // Trier par idBesoin (plus ancien d'abord)
+        usort($besoins, function($a, $b) {
+            $aId = is_object($a) ? $a->getIdBesoin() : ($a['idBesoin'] ?? 0);
+            $bId = is_object($b) ? $b->getIdBesoin() : ($b['idBesoin'] ?? 0);
+            return $aId - $bId;
+        });
+
+        $app->render('dispatchDate', [
+            'besoins' => $besoins,
+            'produitBesoins' => $produitBesoins,
+            'controllerVille' => $controllerVille,
+            'controllerProduitBesoin' => $controllerProduitBesoin,
+            'controllerProduit' => $controllerProduit,
+            'controllerStockage' => $controllerStockage,
+            'controllerEquivalenceProduit' => $controllerEquivalenceProduit
+        ]);
+    });
+
+    // Route POST pour dispatcher un besoin
+    $router->post('/dispatchDate/dispatch', function() use ($app) {
+        try {
+            $idBesoin = $_POST['idBesoin'] ?? null;
+
+            if (!$idBesoin) {
+                $app->redirect('/dispatchDate');
+                return;
+            }
+
+            $controllerBesoin = new ControllerBesoin();
+            $controllerDispatchMere = new ControllerDispatchMere();
+            $controllerDispatchFille = new ControllerDispatchFille();
+            $controllerProduitBesoin = new ControllerProduitBesoin();
+            $controllerStockage = new ControllerStockage();
+
+            $besoin = $controllerBesoin->getBesoinById($idBesoin);
+            $idVille = is_object($besoin) ? $besoin->getIdVille() : ($besoin['idVille'] ?? null);
+
+            // Vérifier que la ville est bien présente
+            if (!$idVille) {
+                $app->redirect('/dispatchDate?error=' . urlencode('La ville du besoin est introuvable'));
+                return;
+            }
+
+            // Créer un dispatch mère
+            $dispatchMere = new \app\models\DispatchMere();
+            $dispatchMere->setIdVille($idVille);
+            $dispatchMere->setDateDispatch(date('Y-m-d H:i:s'));
+            
+            $idDispatchMere = $controllerDispatchMere->addDispatchMere($dispatchMere);
+
+            // Trouver les produits liés au besoin
+            $produitBesoins = $controllerProduitBesoin->getAllProduitBesoin();
+            foreach ($produitBesoins as $pb) {
+                $pbIdBesoin = is_object($pb) ? $pb->getIdBesoin() : ($pb['idBesoin'] ?? null);
+                if ($pbIdBesoin == $idBesoin) {
+                    $idProduit = is_object($pb) ? $pb->getIdProduit() : ($pb['idProduit'] ?? null);
+                    
+                    // Récupérer la quantité en stock
+                    try {
+                        $quantiteStock = $controllerStockage->getQuantiteByProduitId($idProduit);
+                    } catch (\Exception $e) {
+                        $quantiteStock = 0;
+                    }
+
+                    // Créer une dispatch fille avec la quantité disponible
+                    if ($quantiteStock > 0) {
+                        $dispatchFille = new DispatchFille();
+                        $dispatchFille->setIdDispatchMere($idDispatchMere);
+                        $dispatchFille->setIdProduit($idProduit);
+                        $dispatchFille->setQuantite($quantiteStock);
+                        
+                        $controllerDispatchFille->addDispatchFille($dispatchFille);
+                    }
+                }
+            }
+
+            $app->redirect('/dispatchDate?success=1');
+        } catch (\Exception $e) {
+            $app->redirect('/dispatchDate?error=' . urlencode($e->getMessage()));
+        }
+    });
+    
     // Route POST pour ajouter un besoin depuis villeDetail
     $router->post('/villeDetail/besoin', function() use ($app) {
         try {
@@ -485,25 +582,56 @@ $router->group('', function(Router $router) use ($app) {
             $idVille = $request->data->idVille ?? null;
             $valBesoin = $request->data->valBesoin ?? null;
             $idType = $request->data->idType ?? null;
+            $idProduit = $request->data->idProduit ?? null;
+            $dateBesoin = $request->data->dateBesoin ?? null;
+            $quantite = $request->data->quantite ?? null;
+            $prixUnitaire = $request->data->prixUnitaire ?? null;
 
-            if (!$idVille || !$valBesoin || !$idType) {
-                $app->view()->set('error', 'La ville, la description et le type sont requis');
-                $app->redirect('/besoinInsert');
+            if (!$idVille || !$valBesoin || !$idType || !$idProduit || !$dateBesoin || $quantite === null || $prixUnitaire === null) {
+                $app->redirect('/?error=' . urlencode('Tous les champs sont requis'));
                 return;
             }
 
+            if ((float)$quantite <= 0) {
+                $app->redirect('/?error=' . urlencode('La quantité doit être positive'));
+                return;
+            }
+
+            if ((float)$prixUnitaire < 0) {
+                $app->redirect('/?error=' . urlencode('Le prix ne peut pas être négatif'));
+                return;
+            }
+
+            // Créer le besoin
             $besoin = new \app\models\Besoin();
             $besoin->setIdVille($idVille);
             $besoin->setValBesoin($valBesoin);
             $besoin->setIdType($idType);
+            $besoin->setDateBesoin($dateBesoin);
 
             $controllerBesoin = new ControllerBesoin();
-            $controllerBesoin->createBesoin($besoin);
+            $idBesoin = $controllerBesoin->createBesoin($besoin);
             
-            $app->redirect('/besoinInsert');
+            // Lier le produit au besoin
+            $produitBesoin = new ProduitBesoin();
+            $produitBesoin->setIdProduit($idProduit);
+            $produitBesoin->setIdBesoin($idBesoin);
+            
+            $controllerProduitBesoin = new ControllerProduitBesoin();
+            $controllerProduitBesoin->createProduitBesoin($produitBesoin);
+            
+            // Créer ou mettre à jour l'équivalence produit avec la quantité demandée et le prix
+            $equivalenceProduit = new EquivalenceProduit();
+            $equivalenceProduit->setIdProduit($idProduit);
+            $equivalenceProduit->setQuantite((float)$quantite);
+            $equivalenceProduit->setPrix((float)$prixUnitaire);
+            
+            $controllerEquivalenceProduit = new ControllerEquivalenceProduit();
+            $controllerEquivalenceProduit->createEquivalenceProduit($equivalenceProduit);
+            
+            $app->redirect('/?success=1');
         } catch (\Exception $e) {
-            $app->view()->set('error', 'Erreur: ' . $e->getMessage());
-            $app->redirect('/besoinInsert');
+            $app->redirect('/?error=' . urlencode('Erreur: ' . $e->getMessage()));
         }
     });
 
